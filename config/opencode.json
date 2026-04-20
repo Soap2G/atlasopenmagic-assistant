@@ -1,0 +1,140 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+
+  "provider": {
+    "anthropic": {
+      "npm": "@ai-sdk/anthropic",
+      "name": "Anthropic (public default)",
+      "env": ["ANTHROPIC_API_KEY"],
+      "models": {
+        "claude-sonnet-4-6": {
+          "name": "Claude Sonnet 4.6 (primary)",
+          "tool_call": true,
+          "temperature": true,
+          "reasoning": true,
+          "attachment": true,
+          "release_date": "2025-09-01",
+          "limit": { "context": 200000, "output": 8192 }
+        },
+        "claude-opus-4-6": {
+          "name": "Claude Opus 4.6 (heaviest reasoning)",
+          "tool_call": true,
+          "temperature": true,
+          "reasoning": true,
+          "attachment": true,
+          "release_date": "2025-11-01",
+          "limit": { "context": 200000, "output": 8192 }
+        },
+        "claude-haiku-4-5-20251001": {
+          "name": "Claude Haiku 4.5 (fast/cheap)",
+          "tool_call": true,
+          "temperature": true,
+          "reasoning": false,
+          "attachment": true,
+          "release_date": "2025-10-01",
+          "limit": { "context": 200000, "output": 8192 }
+        }
+      }
+    },
+
+    "openai": {
+      "npm": "@ai-sdk/openai",
+      "name": "OpenAI (optional)",
+      "env": ["OPENAI_API_KEY"],
+      "models": {
+        "gpt-4.1": {
+          "name": "GPT-4.1",
+          "tool_call": true,
+          "temperature": true,
+          "reasoning": false,
+          "attachment": true,
+          "release_date": "2025-04-01",
+          "limit": { "context": 128000, "output": 8192 }
+        },
+        "gpt-4o-mini": {
+          "name": "GPT-4o mini (fast/cheap)",
+          "tool_call": true,
+          "temperature": true,
+          "reasoning": false,
+          "attachment": false,
+          "release_date": "2024-07-01",
+          "limit": { "context": 128000, "output": 8192 }
+        }
+      }
+    },
+
+    "litellm": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "CERN LiteLLM Gateway (CERN users only)",
+      "env": ["LITELLM_API_KEY"],
+      "options": {
+        "baseURL": "https://llmgw-litellm.web.cern.ch/v1"
+      },
+      "models": {
+        "devstral-small-latest": {
+          "name": "Devstral Small (Mistral coding)",
+          "tool_call": true,
+          "temperature": true,
+          "reasoning": false,
+          "attachment": false,
+          "release_date": "2025-05-01",
+          "limit": { "context": 131072, "output": 8192 }
+        },
+        "qwen/qwen3-32b": {
+          "name": "Qwen 3 32B",
+          "tool_call": true,
+          "temperature": true,
+          "reasoning": true,
+          "attachment": false,
+          "release_date": "2025-06-01",
+          "limit": { "context": 32768, "output": 8192 }
+        },
+        "llama-3.1-8b-instruct": {
+          "name": "Llama 3.1 8B (fast/lightweight)",
+          "tool_call": true,
+          "temperature": true,
+          "reasoning": false,
+          "attachment": false,
+          "release_date": "2024-07-01",
+          "limit": { "context": 8192, "output": 2048 }
+        }
+      }
+    }
+  },
+
+  "model": "anthropic/claude-sonnet-4-6",
+  "small_model": "anthropic/claude-haiku-4-5-20251001",
+
+  "mcp": {
+    "atlasopenmagic": {
+      "type": "remote",
+      "url": "https://atlasopenmagic-mcp.app.cern.ch/mcp",
+      "oauth": false
+    },
+    "cernopendata": {
+      "type": "remote",
+      "url": "https://cernopendata-mcp.app.cern.ch/mcp",
+      "oauth": false
+    }
+  },
+
+  "permission": {
+    "bash": {
+      "*": "ask",
+      "git status*": "allow",
+      "git log*": "allow",
+      "git diff*": "allow",
+      "ls *": "allow",
+      "python *": "ask",
+      "jupyter *": "ask",
+      "pip *": "ask",
+      "uv *": "ask",
+      "curl *": "ask",
+      "xrdcp *": "ask",
+      "rm *": "deny",
+      "rm -rf*": "deny"
+    },
+    "edit": "allow",
+    "webfetch": "allow"
+  }
+}
