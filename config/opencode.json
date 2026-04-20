@@ -37,32 +37,6 @@
       }
     },
 
-    "openai": {
-      "npm": "@ai-sdk/openai",
-      "name": "OpenAI (optional)",
-      "env": ["OPENAI_API_KEY"],
-      "models": {
-        "gpt-4.1": {
-          "name": "GPT-4.1",
-          "tool_call": true,
-          "temperature": true,
-          "reasoning": false,
-          "attachment": true,
-          "release_date": "2025-04-01",
-          "limit": { "context": 128000, "output": 8192 }
-        },
-        "gpt-4o-mini": {
-          "name": "GPT-4o mini (fast/cheap)",
-          "tool_call": true,
-          "temperature": true,
-          "reasoning": false,
-          "attachment": false,
-          "release_date": "2024-07-01",
-          "limit": { "context": 128000, "output": 8192 }
-        }
-      }
-    },
-
     "litellm": {
       "npm": "@ai-sdk/openai-compatible",
       "name": "CERN LiteLLM Gateway (CERN users only)",
@@ -102,8 +76,8 @@
     }
   },
 
-  "model": "anthropic/claude-sonnet-4-6",
-  "small_model": "anthropic/claude-haiku-4-5-20251001",
+  "model": "litellm/devstral-small-latest",
+  "small_model": "litellm/llama-3.1-8b-instruct",
 
   "mcp": {
     "atlasopenmagic": {
