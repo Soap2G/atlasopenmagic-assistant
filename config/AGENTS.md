@@ -11,9 +11,19 @@ that read PHYSLITE and reduced ntuples.
 - Users typically run notebooks on Binder, Google Colab, SWAN, a local
   Jupyter install, or via the Docker images shipped with
   `atlas-outreach-data-tools/notebooks-collection-opendata`.
-- Users **do not** have Rucio, EOS, lxplus, or a CERN grid account.
-  Do not suggest them. Data access is via public HTTPS or XRootD URIs
-  (`root://eospublic.cern.ch//eos/opendata/...`).
+- **Default audience** is public Open Data users: they do NOT have
+  Rucio, EOS, lxplus, or a CERN grid account. Prefer public HTTPS or
+  XRootD URIs (`root://eospublic.cern.ch//eos/opendata/...`) over any
+  grid-based access.
+- **Authenticated audience** (CERN / ATLAS members on lxplus, SWAN,
+  or with the `sw.escape.eu` CVMFS mount): `rucio` and
+  `reana-client` may be available. Detect with `command -v rucio` and
+  `command -v reana-client`; on CVMFS the tools are staged under
+  `/cvmfs/sw.escape.eu/{rucio,reana}/<version>/` and sourced via
+  `setup-minimal.sh`. If present, use the `rucio` skill for
+  authenticated dataset / replica / rule queries and the `reana` skill
+  for workflow lifecycle and log inspection. Never assume these tools
+  are installed without checking first.
 - Python is the primary language. Prefer `uproot`, `awkward`, `coffea`,
   `mplhep`, `hist`, `pyhf`. PyROOT is fine when the user is clearly
   using ROOT.
@@ -44,6 +54,11 @@ that read PHYSLITE and reduced ntuples.
 - When the user needs to read an ATLAS file, load `physlite-basics`
   and have them use `uproot.open` with an `https://` or `root://` URI
   from `atlas_get_urls` / `cod_list_files`.
+- When the user asks about real (non-Open-Data) datasets, replicas,
+  or transfer rules, and `rucio` is on PATH, load the `rucio` skill.
+- When the user asks about REANA workflows, logs, or workspaces, and
+  `reana-client` is on PATH with `REANA_SERVER_URL` /
+  `REANA_ACCESS_TOKEN` set, load the `reana` skill.
 - Always show MC normalisation with the explicit formula
   `weight = cross_section_pb * 1000 * kFactor * genFiltEff * mcWeight
   / sumOfWeights * luminosity_fb` — don't hide it in a helper.
