@@ -56,9 +56,20 @@ that read PHYSLITE and reduced ntuples.
   from `atlas_get_urls` / `cod_list_files`.
 - When the user asks about real (non-Open-Data) datasets, replicas,
   or transfer rules, and `rucio` is on PATH, load the `rucio` skill.
+  **Never emit deprecated flat-verb Rucio commands** (`rucio list-*`,
+  `rucio add-rule`, `rucio delete-rule`, `rucio rule-info`,
+  `rucio get-metadata`, `rucio stat`). Rucio 36+ uses a noun-verb
+  layout: `rucio rse list`, `rucio did list`, `rucio did show`,
+  `rucio did metadata list`, `rucio replica list file|dataset`,
+  `rucio rule list|show|add|remove`, `rucio account limit list`. If
+  unsure of the exact form, read `skills/rucio/reference/commands.md`
+  before emitting.
 - When the user asks about REANA workflows, logs, or workspaces, and
   `reana-client` is on PATH with `REANA_SERVER_URL` /
-  `REANA_ACCESS_TOKEN` set, load the `reana` skill.
+  `REANA_ACCESS_TOKEN` set, load the `reana` skill (inspection,
+  status, logs, downloads) or the `reana-workflows` skill (authoring
+  `reana.yaml`, picking an engine, walking the create-upload-start-
+  download cycle for the first time).
 - Always show MC normalisation with the explicit formula
   `weight = cross_section_pb * 1000 * kFactor * genFiltEff * mcWeight
   / sumOfWeights * luminosity_fb` — don't hide it in a helper.

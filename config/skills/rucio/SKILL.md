@@ -1,7 +1,34 @@
 ---
 name: rucio
-description: Use the Rucio CLI to look up datasets, files, replicas, metadata, and transfer rules for authenticated ATLAS (or other VO) users. Load this skill only when the user is on lxplus or has a local Rucio client with a valid credential; do NOT load it for public ATLAS Open Data workflows (those use atlas_get_urls / cod_list_files instead). Prefer read-only commands; every write operation must be confirmed.
+description: Use the Rucio CLI (v36+, noun-verb layout: `rucio did list`, `rucio rse list`, `rucio rule add` — NEVER the deprecated flat verbs `list-dids`, `list-rses`, `add-rule`) to look up datasets, files, replicas, metadata, and transfer rules for authenticated ATLAS (or other VO) users. Load only when the user is on lxplus or has a local Rucio client with a valid credential; do NOT load for public ATLAS Open Data workflows (those use atlas_get_urls / cod_list_files). Prefer read-only commands; every write operation must be confirmed.
 ---
+
+## CRITICAL: emit only v38+ noun-verb commands
+
+Rucio 36+ deprecated the flat-verb CLI. The flat forms still print a
+`WARNING: This method is being deprecated` and will be removed. **Never
+emit them.** Always use the noun-verb form:
+
+| ❌ Do NOT emit (deprecated) | ✅ Use instead |
+|---|---|
+| `rucio list-rses` | `rucio rse list` |
+| `rucio list-dids '<scope>:<pattern>'` | `rucio did list '<scope>:<pattern>'` |
+| `rucio list-files <did>` | `rucio did content list <did>` |
+| `rucio list-content <did>` | `rucio did content list <did>` |
+| `rucio list-parent-dids <did>` / `rucio stat <did>` | `rucio did show <did>` |
+| `rucio get-metadata <did>` | `rucio did metadata list <did>` |
+| `rucio list-file-replicas <did>` | `rucio replica list file <did>` |
+| `rucio list-dataset-replicas <did>` | `rucio replica list dataset <did>` |
+| `rucio list-rules <did>` | `rucio rule list <did>` |
+| `rucio rule-info <rule_id>` | `rucio rule show <rule_id>` |
+| `rucio add-rule <did> <n> <rse>` | `rucio rule add <did> <n> <rse>` |
+| `rucio delete-rule <rule_id>` | `rucio rule remove <rule_id>` |
+| `rucio list-account-limits <a>` / `rucio list-account-usage <a>` | `rucio account limit list <a>` |
+| `rucio list-rse-attributes <rse>` | `rucio rse attribute list <rse>` |
+
+If you ever see yourself about to type `rucio <verb>-<noun>`, stop and
+rewrite it as `rucio <noun> <verb>`. The full catalogue lives in
+[reference/commands.md](reference/commands.md).
 
 ## Scope
 

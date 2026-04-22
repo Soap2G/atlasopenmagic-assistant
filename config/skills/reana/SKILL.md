@@ -26,6 +26,13 @@ explicit confirmation. Destructive ops (`stop`, `delete`, `rm`,
   [reference/commands.md](reference/commands.md). Read it when you
   need a flag, an uncommon subcommand, or the YAML schema.
 
+## Sibling skill: authoring new workflows
+
+For writing a `reana.yaml` from scratch, choosing an engine, and
+walking the build-upload-start-download cycle for the first time, use
+the **`reana-workflows`** skill. This skill (`reana`) is focused on
+inspecting and triaging workflows that already exist on the server.
+
 ## Getting the CLI
 
 On machines with the `sw.escape.eu` CVMFS mount, `reana-client` is
