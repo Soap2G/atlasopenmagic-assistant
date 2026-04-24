@@ -100,7 +100,7 @@ services:
     docs_url: https://lxplusdoc.web.cern.ch
     cli: ssh
     skill: null
-    integrates_with: [rucio, cvmfs, htcondor, eos]
+    integrates_with: [rucio, cvmfs, htcondor, eos-public]
     use_when:
       - User needs a shell with grid tooling and CVMFS available.
       - Short scripts, condor submission, rucio CLI sessions.
@@ -108,23 +108,45 @@ services:
       - User has no CERN account.
       - Long-running computation (use HTCondor / REANA instead).
 
+  - id: lxplus-gpu
+    name: lxplus-gpu
+    category: compute
+    purpose: Shared interactive SSH access to a GPU-enabled lxplus node (driver-pinned, shared, limited isolation).
+    audience: cern-user
+    auth: [cern-sso]
+    entry_url: ssh://lxplus-gpu.cern.ch
+    docs_url: https://clouddocs.web.cern.ch/gpu_overview.html
+    cli: ssh
+    skill: null
+    integrates_with: [cvmfs, eos-public, htcondor]
+    use_when:
+      - Quick GPU sanity check (`nvidia-smi`) or debugging CUDA setup.
+      - Testing a training script interactively before moving to batch or Kubeflow.
+    avoid_when:
+      - Long-running training — use SWAN, HTCondor GPU, or ml.cern.ch.
+      - Performance-sensitive work — the node is shared.
+
   - id: swan
     name: SWAN
     category: compute
-    purpose: CERN's Jupyter-as-a-Service — notebooks with CVMFS, EOS, Spark, Dask.
+    purpose: CERN's Jupyter-as-a-Service — notebooks with CVMFS, EOS, Spark/Dask, HTCondor scale-out, and T4 GPUs.
     audience: cern-user
     auth: [cern-sso]
     entry_url: https://swan.cern.ch
     docs_url: https://swan.docs.cern.ch
     cli: null
     skill: null
-    integrates_with: [cvmfs, eos, atlas-opendata, cern-opendata, rucio, ml-cern]
+    integrates_with: [cvmfs, eos-public, atlas-opendata, cern-opendata, rucio, ml-cern, htcondor]
+    notes:
+      - Supports "interactive-plus-batch" via Dask-HTCondor (see reference/swan-htcondor.md).
+      - Exposes T4 GPUs when requested in the session form (see reference/cern-gpus.md).
     use_when:
       - User has a CERN account and wants an interactive notebook.
       - Need ROOT / ATLAS / CMS software stacks on CVMFS out of the box.
+      - Want to scale a notebook analysis across HTCondor workers without leaving Jupyter.
     avoid_when:
       - User is non-CERN (use Binder / Colab).
-      - Heavy-GPU ML training (use ml.cern.ch).
+      - Heavy-GPU ML training on A100s — use ml.cern.ch or an OpenStack g4 flavor.
 
   - id: binder
     name: Binder
@@ -163,22 +185,46 @@ services:
       - Data that must stay on CERN storage.
 
   - id: coffea-casa
-    name: coffea-casa / Analysis Facility
+    name: coffea-casa
     category: compute
-    purpose: Dask-on-Kubernetes analysis facility tuned for columnar HEP analysis (`coffea` / `awkward` / `uproot`).
+    purpose: Dask-on-Kubernetes facility (one implementation of the "analysis facility" idea) tuned for columnar HEP analysis with `coffea` / `awkward` / `uproot`.
     audience: cern-user
     auth: [cern-sso, token]
     entry_url: https://coffea.casa
     docs_url: https://coffea-casa.readthedocs.io
     cli: null
     skill: physlite-basics
-    integrates_with: [atlas-opendata, cern-opendata, rucio]
+    integrates_with: [atlas-opendata, cern-opendata, rucio, cern-af]
+    notes:
+      - coffea-casa is ONE analysis facility, not THE analysis facility. The integrated CERN stack (see `cern-af`) is the native on-site equivalent.
     use_when:
-      - Columnar analysis over O(100 GB – TB) with Dask parallelism.
+      - Columnar analysis over O(100 GB – TB) with Dask parallelism, with a pre-tuned cluster (no setup).
       - Want to keep using `coffea`/`awkward` but scale out.
     avoid_when:
       - Non-columnar C++/ROOT workflows.
       - Small jobs that fit on a laptop.
+      - User is already on CERN infra — the integrated CERN AF (`cern-af`) may be the better default.
+
+  - id: cern-af
+    name: CERN Analysis Facility
+    category: compute
+    purpose: The integrated CERN-site stack for end-to-end analysis — lxplus + SWAN + HTCondor batch + REANA + ml.cern.ch + Rucio + EOS + CVMFS, presented as one facility.
+    audience: cern-user
+    auth: [cern-sso]
+    entry_url: https://cern.ch/analysis-facility
+    docs_url: https://swan.docs.cern.ch
+    cli: null
+    skill: null
+    integrates_with: [lxplus, swan, htcondor, reana, ml-cern, rucio, cvmfs, eos-public, gitlab-cern]
+    notes:
+      - Not a single product but an umbrella over multiple services that interoperate through shared storage (EOS, CVMFS) and shared auth (CERN SSO, VOMS).
+      - Typical path through it — develop on SWAN → scale on HTCondor (see `reference/swan-htcondor.md`) → preserve on REANA → train on ml.cern.ch (see `reference/cern-gpus.md`) → data via Rucio.
+    use_when:
+      - User has a CERN account and a multi-stage analysis (develop → scale → preserve → ML).
+      - They ask "which analysis facility at CERN" or "how do the CERN services fit together".
+    avoid_when:
+      - User is non-CERN (route to public tools: Binder/Colab + Open Data).
+      - Single-tool question — point directly at the right service entry.
 
   - id: htcondor
     name: HTCondor @ CERN

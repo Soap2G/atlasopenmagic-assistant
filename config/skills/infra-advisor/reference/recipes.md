@@ -11,6 +11,7 @@ compose from `catalog.yaml` using the intake questions in `SKILL.md`.
 - classroom-exploration — public, no account, teaching
 - interactive-cern-user — notebook at CERN
 - scalable-open-data-analysis — columnar scale-out
+- notebook-to-batch — SWAN + HTCondor, interactive-plus-batch
 - reproducible-paper-pipeline — declarative + DOI
 - non-public-datasets — experiment-member grid work
 - distributed-analysis-plus-ml — user's example: Open Data + distributed analysis + ML
@@ -70,26 +71,79 @@ stack pre-installed."
 **Goal** — "I want to run a columnar analysis over the whole
 Open Data 13 TeV release and not wait all day."
 
-**Stack** — ATLAS Open Data + coffea-casa + (optional) REANA
-wrapper for reproducibility.
+**Stack** — ATLAS Open Data + an analysis facility (the **CERN AF**
+for CERN users, **coffea-casa** as an external alternative) +
+(optional) REANA wrapper for reproducibility.
+
+**Picking the facility**
+- **CERN AF** (SWAN + HTCondor + EOS + CVMFS, see `catalog.yaml:cern-af`
+  and `reference/swan-htcondor.md`) — native on-site path for CERN
+  users. Same session develops and scales.
+- **coffea-casa** (https://coffea.casa) — pre-tuned Dask cluster,
+  quickest path if the user is already a coffea user and doesn't want
+  to configure anything.
+- Both are valid "analysis facilities"; coffea-casa is one particular
+  implementation, the CERN AF is an umbrella over the integrated CERN
+  stack.
 
 **Steps**
 1. Use `atlas_get_urls` (atlasopenmagic MCP) to resolve the full file
    list per DSID.
-2. Log in to `https://coffea.casa` (CERN SSO or token).
-3. Write a `coffea` processor that reads the public URIs directly —
-   no `rucio download` needed.
-4. Scale out with the Dask cluster coffea-casa provisions per user.
+2. Enter the facility:
+   - CERN AF — open https://swan.cern.ch with the HTCondor pool
+     enabled, platform AlmaLinux9.
+   - coffea-casa — log in to https://coffea.casa (CERN SSO or token).
+3. Write the analysis in the framework matching the ecosystem (see
+   `reference/columnar-frameworks.md`): coffea for Python columnar,
+   distributed RDataFrame for ROOT/C++.
+4. Scale out — `SwanHTCondorCluster` + Dask on the CERN AF, or the
+   pre-provisioned Dask cluster on coffea-casa.
 5. When the analysis stabilises, wrap it in a `reana.yaml` (serial or
    snakemake) so anyone can re-run it.
 
 **Caveats**
-- coffea-casa quotas are per-user; don't hoard a cluster overnight.
+- Quotas on both facilities are per-user; don't hoard a cluster
+  overnight.
 - Streaming TB over XRootD is faster than downloading, but only if
-  your processor stays in the coffea idiom (lazy columnar reads).
+  your processor stays in the lazy-columnar idiom.
 
 **Next skill** — `physlite-basics`, then `reana-workflows` when
-pinning.
+pinning. See `columnar-frameworks.md` to pick between uproot+awkward,
+coffea, and distributed RDataFrame.
+
+---
+
+## notebook-to-batch
+
+**Goal** — "I want to develop my analysis interactively in a
+notebook, then run the same code as a batch job — without rewriting
+anything."
+
+**Stack** — SWAN + Dask-HTCondor + (later) plain `condor_submit`.
+
+**Steps**
+1. Start a SWAN session (`https://swan.cern.ch`) with platform
+   AlmaLinux9 and the HTCondor pool enabled in the session form.
+2. In the notebook, create a `SwanHTCondorCluster`, `cluster.scale(N)`,
+   and connect a `dask.distributed.Client`. The Dask JupyterLab
+   extension gives you a GUI for the same. See
+   `reference/swan-htcondor.md` for the snippet.
+3. Use any Dask-aware framework — distributed RDataFrame, coffea with
+   the Dask executor, or `dask.dataframe`/`dask.array`.
+4. Once the analysis stabilises, dump the driver to a `.py` file and
+   run the same code from lxplus via `condor_submit`
+   (`condor/move_to_batch/` in SWAN docs).
+5. For paper-grade reproducibility, wrap the batch command in a
+   `reana.yaml` serial step — `reana-workflows` skill.
+
+**Caveats**
+- Start with `cluster.scale(2-4)`, not hundreds — you share the farm.
+- Version drift on `dask-lxplus` / `SwanHTCondorCluster` is real;
+  check the upstream docs if imports break.
+- CPU only. For GPU work see `reference/cern-gpus.md`.
+
+**Next skill** — none specific; this is an infra-only recipe.
+`reana-workflows` when pinning the script for reproducibility.
 
 ---
 
@@ -155,25 +209,35 @@ the grid).
 distributed analysis on both MC and data, and train an ML model on
 the result."
 
-**Stack** — ATLAS Open Data + REANA (or coffea-casa) + ml.cern.ch.
+**Stack** — ATLAS Open Data + (SWAN+HTCondor **or** coffea-casa **or**
+REANA) + (SWAN T4 or ml.cern.ch for training).
+
+**Framework choice** — see `columnar-frameworks.md`.
+- Python/columnar shop → **coffea** on SWAN+HTCondor or coffea-casa.
+- ROOT/C++ shop → **distributed RDataFrame** on SWAN+HTCondor (same
+  code scales with a Dask client swap).
 
 **Steps**
 1. **Data access**: use `atlas_get_urls` to resolve per-DSID file
    lists. No Rucio needed — URIs are public
    (`root://eospublic.cern.ch/…`).
 2. **Distributed analysis**: pick one:
-   - **coffea-casa** for quick iteration on a Dask cluster — best
-     when the user is still shaping features.
-   - **REANA** (serial or snakemake) for a declarative pipeline that
-     anyone can re-run, with outputs pinned by digest. Good when the
-     feature extraction stabilises.
+   - **SWAN + HTCondor (Dask)** — develop in a notebook, scale to the
+     CERN pool with a `SwanHTCondorCluster` client. See
+     `swan-htcondor.md`. Best if the user wants one session that does
+     both develop and scale.
+   - **coffea-casa** — if the user is already a coffea user and wants
+     the pre-tuned Dask cluster.
+   - **REANA** (serial or snakemake) — if the analysis has stabilised
+     and needs to be pinned and shareable.
 3. **Feature export**: analysis writes training tensors (parquet /
    HDF5 / ROOT) into an EOS project area or a REANA workspace.
-4. **ML training**: move to `https://ml.cern.ch`.
-   - Spin up a Kubeflow notebook with GPU.
-   - Mount the EOS project area (or `reana-client download`) to pull
-     the features.
-   - Train with PyTorch / TF; log metrics to MLflow / TensorBoard.
+4. **ML training** — choose the GPU tier. See `cern-gpus.md`.
+   - **SWAN T4** — small/medium models, want to stay in Jupyter.
+   - **ml.cern.ch (Kubeflow)** — larger models, training + serving.
+   - **OpenStack g4 (A100)** — multi-week lease, custom CUDA stack
+     (requires a ticket to GPU Platform Consultancy).
+   - **Colab** — non-CERN user; training only, no CERN-side serving.
 5. **Serving**: on ml.cern.ch, wrap the trained model as a KFServing
    / Seldon endpoint; get a stable inference URL.
 6. **Reproducibility tie-back** (optional): version the training code
@@ -187,12 +251,13 @@ the result."
   CERN infra.
 - Keep the feature-extraction step deterministic (no random seeds)
   so training inputs are reproducible.
-- Free GPU quota on ml.cern.ch is modest — size the training job
-  accordingly.
+- GPU quota at CERN is scarce — size the training job to the GPU
+  tier you can realistically hold. Lease scrutiny increases beyond
+  ~4 months.
 
 **Next skills** — `atlas-opendata` → (`reana-workflows` or
-`physlite-basics` for coffea) → then outside-skill pointer to
-ml.cern.ch docs.
+`physlite-basics` for coffea, or `columnar-frameworks.md` for
+RDataFrame) → then outside-skill pointer to ml.cern.ch docs.
 
 ---
 

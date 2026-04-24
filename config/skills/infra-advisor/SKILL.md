@@ -25,16 +25,39 @@ Don't use this skill when:
 
 ## Reference files
 
+Read lazily. All one level deep from this SKILL.md.
+
 - **`reference/catalog.yaml`** — structured service catalogue. One
   record per tool (purpose, audience, auth, entry URL, when-to-use,
   when-to-avoid, integrations, matching skill). Grep or read it.
 - **`reference/recipes.md`** — pre-cooked stacks for common compound
   goals (public exploration, distributed analysis, reproducibility,
   ML training + serving, non-public datasets).
+- **`reference/cern-gpus.md`** — distilled from
+  https://clouddocs.web.cern.ch/gpu_overview.html. Read when the goal
+  needs a GPU (training, vGPU, CUDA debugging). Routes between
+  lxplus-gpu, SWAN (T4), HTCondor GPU, ml.cern.ch, OpenStack g*.
+- **`reference/swan-htcondor.md`** — distilled from
+  https://swan.docs.cern.ch/condor/intro/. Read when the user wants
+  to develop in a SWAN notebook and scale out to the CERN HTCondor
+  pool from the same session (interactive-plus-batch).
+- **`reference/columnar-frameworks.md`** — uproot/awkward vs coffea
+  vs (distributed) RDataFrame. Read when the user asks "which
+  framework" or when a recipe needs to name one.
 
-Read both lazily — `recipes.md` first when the user's goal matches one
-of the named recipes; `catalog.yaml` when composing a bespoke stack or
-looking up a single service's details.
+Pick the right file by intent: `recipes.md` when the user's goal
+matches a named compound recipe; `catalog.yaml` when composing bespoke;
+the three digest files when the topic (GPUs, SWAN scale-out,
+columnar frameworks) is the centre of the question.
+
+### Drift policy
+
+The three digest files pin their **canonical upstream URL** at the
+top, plus the date they were last refreshed. If you suspect drift
+(user reports a command that doesn't work, or the digest is older
+than ~6 months), WebFetch the canonical URL and compare before
+answering from the digest. Do not bulk-re-fetch — only when you have
+a concrete reason to suspect the note is stale.
 
 ## Intake: five questions to triangulate
 
@@ -84,14 +107,37 @@ Use this to prune the catalogue fast. Full details in
 | Classroom / first look at HEP data                | ATLAS Open Data + Binder |
 | Interactive notebook, CERN user                   | SWAN + EOS + CVMFS |
 | Scripted local analysis, any user                 | `uproot`/`coffea` + Docker image |
-| Scalable Python analysis over Open Data           | coffea-casa (AF) + ATLAS/CMS Open Data |
+| Scalable Python analysis over Open Data           | CERN AF (SWAN + HTCondor / lxplus / ml.cern.ch / REANA) or coffea-casa |
+| ROOT/C++ shop scaling the same code local → batch | (distributed) RDataFrame on SWAN + HTCondor |
+| Dev-in-notebook, run-in-batch                     | SWAN + HTCondor (Dask-HTCondor) → move_to_batch |
 | Declarative, reproducible pipeline                | REANA + GitLab + container digest |
 | Paper reproducibility + DOI                       | REANA + CVMFS + Zenodo |
 | Non-public dataset discovery / transfer           | Rucio |
 | Grid submission, ATLAS member                     | PanDA (on top of Rucio) |
 | Large batch on CERN resources                     | HTCondor @ CERN |
-| ML training on GPU + inference endpoint           | Rucio → SWAN/ml.cern.ch → Kubeflow serve |
+| GPU sanity check / CUDA debug (interactive)       | lxplus-gpu (SSH) |
+| ML training in a notebook (small/medium model)    | SWAN T4 GPU |
+| ML training + inference endpoint                  | ml.cern.ch (Kubeflow) |
+| A100 / custom CUDA stack, multi-week lease        | OpenStack g4.* flavor (ticket) |
 | "Quick and cheap" answer, no CERN account         | Colab + atlas-opendata skill |
+
+For the framework dimension ("which columnar library"), consult
+`reference/columnar-frameworks.md` — it picks between uproot/awkward,
+coffea, and (distributed) RDataFrame.
+
+### On "the Analysis Facility"
+
+When a user says *"the analysis facility"* at CERN, they usually mean
+the **integrated CERN stack** (lxplus + SWAN + HTCondor batch + REANA
++ ml.cern.ch + Rucio + EOS + CVMFS) presented as one facility — not
+any single product. The `cern-af` entry in `catalog.yaml` captures
+this umbrella.
+
+**coffea-casa** is a separate, external analysis facility (Dask on
+Kubernetes tuned for coffea). It's one *instance* of the AF idea, not
+THE AF. Recommend the CERN AF as the default for CERN users;
+recommend coffea-casa when the user is already in the coffea
+ecosystem and wants zero setup.
 
 If the goal composes two rows (e.g. "distributed analysis **and** ML"),
 compose the stacks — that's the whole point of this skill. Example in
