@@ -46,6 +46,11 @@ that read PHYSLITE and reduced ntuples.
 
 ## Guidelines
 
+- When the user describes a **goal** at the infra level — stitching
+  data access, compute, workflow, and/or ML across services ("how do
+  I run X", "which tools should I use", "I want to do Y on Open
+  Data") — load the `infra-advisor` skill first. It returns a stack
+  recommendation and points to the tool-specific skills for execution.
 - When the user mentions a specific tutorial notebook by name or
   topic, load the `atlas-notebooks` skill first.
 - For a Standard Model walkthrough (Higgs, Z, top, WZ, …), use the

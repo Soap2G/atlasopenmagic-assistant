@@ -1,0 +1,301 @@
+# HEP / CERN service catalogue
+#
+# One record per service. Fields:
+#   id              machine key, lowercase-hyphen
+#   name            display name
+#   category        data | compute | workflow | ml | storage | registry | dev
+#   purpose         one-sentence description
+#   audience        public | cern-user | experiment-member | admin
+#   auth            [anonymous | cern-sso | voms-proxy | oidc | token]
+#   entry_url       landing page for a new user
+#   docs_url        canonical docs
+#   cli             CLI command name (or null)
+#   skill           matching skill in this repo (or null)
+#   integrates_with [other ids from this catalogue]
+#   use_when        bullets — pick this service when…
+#   avoid_when      bullets — prefer something else when…
+#
+# Keep records short. Depth belongs in the service's own docs / skill.
+
+services:
+
+  - id: atlas-opendata
+    name: ATLAS Open Data portal
+    category: data
+    purpose: Public ATLAS datasets + curated outreach samples (13 TeV 2024r, 2025r-evgen, …) with per-DSID metadata.
+    audience: public
+    auth: [anonymous]
+    entry_url: https://opendata.atlas.cern
+    docs_url: https://opendata.atlas.cern/docs
+    cli: null
+    skill: atlas-opendata
+    integrates_with: [binder, colab, swan, coffea-casa, reana]
+    use_when:
+      - User is not a CERN member or does not need live grid data.
+      - Goal is teaching, outreach, reproducing a public note.
+      - Needs DSID → xsec / k-factor / filter-eff metadata.
+    avoid_when:
+      - User needs the latest experiment data or non-public derivations.
+
+  - id: cern-opendata
+    name: CERN Open Data portal
+    category: data
+    purpose: Portal-wide records (CMS, ATLAS, LHCb, ALICE, OPERA) with recid / DOI-addressed datasets, code, containers.
+    audience: public
+    auth: [anonymous]
+    entry_url: https://opendata.cern.ch
+    docs_url: https://opendata.cern.ch/docs
+    cli: null
+    skill: cern-opendata
+    integrates_with: [binder, colab, swan, coffea-casa, reana, zenodo]
+    use_when:
+      - User mentions a recid, DOI, or a non-ATLAS experiment.
+      - Need supplementary material (fit inputs, trigger menus, MC).
+    avoid_when:
+      - Query is clearly ATLAS-MC-specific (use atlas-opendata instead).
+
+  - id: rucio
+    name: Rucio
+    category: data
+    purpose: Distributed data-management system — locate, transfer, and manage replicas of experiment datasets.
+    audience: experiment-member
+    auth: [voms-proxy, oidc]
+    entry_url: https://rucio-ui.cern.ch
+    docs_url: https://rucio.cern.ch/documentation/
+    cli: rucio
+    skill: rucio
+    integrates_with: [reana, panda, htcondor, cvmfs, ml-cern]
+    use_when:
+      - User has a CERN grid account and needs non-Open-Data samples.
+      - Need to transfer, replicate, or locate experiment data.
+    avoid_when:
+      - User is working only with public Open Data files.
+      - User has no VOMS/OIDC credential.
+
+  - id: reana
+    name: REANA
+    category: workflow
+    purpose: Reproducible-analysis platform — declarative workflows (serial / snakemake / cwl / yadage) run on Kubernetes.
+    audience: cern-user
+    auth: [cern-sso, token]
+    entry_url: https://reana.cern.ch
+    docs_url: https://docs.reana.io
+    cli: reana-client
+    skill: reana-workflows
+    integrates_with: [rucio, cvmfs, gitlab-cern, zenodo]
+    use_when:
+      - User wants a declarative pipeline that runs the same way for anyone.
+      - Goal is paper-grade reproducibility, or running on CERN resources without writing batch scripts.
+    avoid_when:
+      - One-shot interactive exploration (use SWAN / local Jupyter).
+      - Very low-latency iteration (REANA scheduling adds overhead).
+
+  - id: lxplus
+    name: lxplus
+    category: compute
+    purpose: Public SSH login cluster at CERN — shell access to AFS/EOS/CVMFS and a VOMS proxy.
+    audience: cern-user
+    auth: [cern-sso]
+    entry_url: ssh://lxplus.cern.ch
+    docs_url: https://lxplusdoc.web.cern.ch
+    cli: ssh
+    skill: null
+    integrates_with: [rucio, cvmfs, htcondor, eos]
+    use_when:
+      - User needs a shell with grid tooling and CVMFS available.
+      - Short scripts, condor submission, rucio CLI sessions.
+    avoid_when:
+      - User has no CERN account.
+      - Long-running computation (use HTCondor / REANA instead).
+
+  - id: swan
+    name: SWAN
+    category: compute
+    purpose: CERN's Jupyter-as-a-Service — notebooks with CVMFS, EOS, Spark, Dask.
+    audience: cern-user
+    auth: [cern-sso]
+    entry_url: https://swan.cern.ch
+    docs_url: https://swan.docs.cern.ch
+    cli: null
+    skill: null
+    integrates_with: [cvmfs, eos, atlas-opendata, cern-opendata, rucio, ml-cern]
+    use_when:
+      - User has a CERN account and wants an interactive notebook.
+      - Need ROOT / ATLAS / CMS software stacks on CVMFS out of the box.
+    avoid_when:
+      - User is non-CERN (use Binder / Colab).
+      - Heavy-GPU ML training (use ml.cern.ch).
+
+  - id: binder
+    name: Binder
+    category: compute
+    purpose: Hosted Jupyter built from a public git repo — one-click reproducible notebook for anyone.
+    audience: public
+    auth: [anonymous]
+    entry_url: https://mybinder.org
+    docs_url: https://mybinder.readthedocs.io
+    cli: null
+    skill: null
+    integrates_with: [atlas-opendata, cern-opendata]
+    use_when:
+      - Zero-install teaching / outreach material.
+      - Reproducible notebooks attached to a paper or tutorial repo.
+    avoid_when:
+      - Sessions need to exceed a few GB RAM or ~hours of runtime.
+      - Need GPU.
+
+  - id: colab
+    name: Google Colab
+    category: compute
+    purpose: Google-hosted Jupyter notebooks with free GPU/TPU tiers.
+    audience: public
+    auth: [anonymous]
+    entry_url: https://colab.research.google.com
+    docs_url: https://colab.research.google.com/notebooks/intro.ipynb
+    cli: null
+    skill: null
+    integrates_with: [atlas-opendata, cern-opendata]
+    use_when:
+      - User has no CERN account but wants a GPU for a toy ML model.
+      - Classroom demos on public data.
+    avoid_when:
+      - Anything reproducible long-term (sessions are ephemeral).
+      - Data that must stay on CERN storage.
+
+  - id: coffea-casa
+    name: coffea-casa / Analysis Facility
+    category: compute
+    purpose: Dask-on-Kubernetes analysis facility tuned for columnar HEP analysis (`coffea` / `awkward` / `uproot`).
+    audience: cern-user
+    auth: [cern-sso, token]
+    entry_url: https://coffea.casa
+    docs_url: https://coffea-casa.readthedocs.io
+    cli: null
+    skill: physlite-basics
+    integrates_with: [atlas-opendata, cern-opendata, rucio]
+    use_when:
+      - Columnar analysis over O(100 GB – TB) with Dask parallelism.
+      - Want to keep using `coffea`/`awkward` but scale out.
+    avoid_when:
+      - Non-columnar C++/ROOT workflows.
+      - Small jobs that fit on a laptop.
+
+  - id: htcondor
+    name: HTCondor @ CERN
+    category: compute
+    purpose: Batch system for large, embarrassingly-parallel jobs on CERN resources.
+    audience: cern-user
+    auth: [cern-sso]
+    entry_url: https://batchdocs.web.cern.ch
+    docs_url: https://batchdocs.web.cern.ch/local/quick.html
+    cli: condor_submit
+    skill: null
+    integrates_with: [lxplus, cvmfs, eos, rucio]
+    use_when:
+      - Thousands of independent jobs, short-to-medium duration.
+      - User already has a working single-job script and wants to fan out.
+    avoid_when:
+      - Heavy inter-job dependencies (use REANA / PanDA).
+      - Workflow needs to survive outside CERN infra.
+
+  - id: panda
+    name: PanDA / Big PanDA
+    category: compute
+    purpose: ATLAS distributed production and analysis system — grid-wide jobs via `prun` / `pathena`.
+    audience: experiment-member
+    auth: [voms-proxy]
+    entry_url: https://bigpanda.cern.ch
+    docs_url: https://panda-wms.readthedocs.io
+    cli: prun
+    skill: null
+    integrates_with: [rucio, cvmfs]
+    use_when:
+      - ATLAS analysis at grid scale (100s of sites).
+      - User has a PanDA-ready release and a Rucio-registered dataset.
+    avoid_when:
+      - Non-ATLAS use cases.
+      - One-shot / interactive work.
+
+  - id: ml-cern
+    name: ml.cern.ch (Kubeflow at CERN)
+    category: ml
+    purpose: CERN's Kubeflow platform — GPU-backed training, inference endpoints, pipelines.
+    audience: cern-user
+    auth: [cern-sso]
+    entry_url: https://ml.cern.ch
+    docs_url: https://ml.docs.cern.ch
+    cli: kubectl
+    skill: null
+    integrates_with: [swan, eos, rucio, gitlab-cern]
+    use_when:
+      - GPU training jobs, PyTorch / TF.
+      - Need to expose a trained model as an inference endpoint.
+    avoid_when:
+      - No GPU needed (SWAN or coffea-casa is cheaper).
+      - User has no CERN account.
+
+  - id: cvmfs
+    name: CVMFS
+    category: storage
+    purpose: Read-only, globally distributed software filesystem — experiment stacks, Rucio/REANA clients, etc.
+    audience: public
+    auth: [anonymous]
+    entry_url: https://cvmfs.readthedocs.io
+    docs_url: https://cvmfs.readthedocs.io
+    cli: null
+    skill: null
+    integrates_with: [lxplus, swan, reana, htcondor, panda]
+    use_when:
+      - Need a pre-packaged software stack (e.g. `/cvmfs/atlas.cern.ch`, `/cvmfs/sw.escape.eu`).
+      - Want bit-identical software across sites.
+    avoid_when:
+      - User's environment has no CVMFS client (Binder / Colab).
+
+  - id: eos-public
+    name: EOS public
+    category: storage
+    purpose: Public XRootD storage exposing `root://eospublic.cern.ch//eos/opendata/...` endpoints for Open Data.
+    audience: public
+    auth: [anonymous]
+    entry_url: https://eospublic.cern.ch
+    docs_url: https://eos-docs.web.cern.ch
+    cli: xrdcp
+    skill: null
+    integrates_with: [atlas-opendata, cern-opendata]
+    use_when:
+      - Streaming Open Data files over XRootD from a notebook.
+      - Bulk download of public samples.
+
+  - id: gitlab-cern
+    name: CERN GitLab
+    category: dev
+    purpose: Git hosting + CI/CD at CERN, with SSO and Kubernetes runners.
+    audience: cern-user
+    auth: [cern-sso]
+    entry_url: https://gitlab.cern.ch
+    docs_url: https://gitlab.docs.cern.ch
+    cli: git
+    skill: null
+    integrates_with: [reana, ml-cern]
+    use_when:
+      - Analysis code needs CI, private hosting, or CERN SSO.
+      - Triggering REANA from a CI pipeline.
+    avoid_when:
+      - Public code — github.com may be friendlier for outside collaborators.
+
+  - id: zenodo
+    name: Zenodo
+    category: registry
+    purpose: DOI-minting repository for data, code, and analysis artefacts.
+    audience: public
+    auth: [anonymous, token]
+    entry_url: https://zenodo.org
+    docs_url: https://developers.zenodo.org
+    cli: null
+    skill: null
+    integrates_with: [gitlab-cern, reana, cern-opendata]
+    use_when:
+      - Paper reproducibility — DOI for the code + workflow snapshot.
+      - Archive a REANA workflow alongside a publication.
+    avoid_when:
+      - Ephemeral or experimental outputs (don't pollute with a DOI).
