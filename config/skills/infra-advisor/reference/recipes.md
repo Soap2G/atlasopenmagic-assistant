@@ -76,9 +76,8 @@ for CERN users, **coffea-casa** as an external alternative) +
 (optional) REANA wrapper for reproducibility.
 
 **Picking the facility**
-- **CERN AF** (SWAN + HTCondor + EOS + CVMFS, see `catalog.yaml:cern-af`
-  and `reference/swan-htcondor.md`) — native on-site path for CERN
-  users. Same session develops and scales.
+- **CERN AF** (SWAN + HTCondor + EOS + CVMFS) — native on-site path
+  for CERN users. Same session develops and scales.
 - **coffea-casa** (https://coffea.casa) — pre-tuned Dask cluster,
   quickest path if the user is already a coffea user and doesn't want
   to configure anything.
@@ -93,9 +92,8 @@ for CERN users, **coffea-casa** as an external alternative) +
    - CERN AF — open https://swan.cern.ch with the HTCondor pool
      enabled, platform AlmaLinux9.
    - coffea-casa — log in to https://coffea.casa (CERN SSO or token).
-3. Write the analysis in the framework matching the ecosystem (see
-   `reference/columnar-frameworks.md`): coffea for Python columnar,
-   distributed RDataFrame for ROOT/C++.
+3. Write the analysis in the framework matching the ecosystem:
+   coffea for Python columnar, distributed RDataFrame for ROOT/C++.
 4. Scale out — `SwanHTCondorCluster` + Dask on the CERN AF, or the
    pre-provisioned Dask cluster on coffea-casa.
 5. When the analysis stabilises, wrap it in a `reana.yaml` (serial or
@@ -126,8 +124,8 @@ anything."
    AlmaLinux9 and the HTCondor pool enabled in the session form.
 2. In the notebook, create a `SwanHTCondorCluster`, `cluster.scale(N)`,
    and connect a `dask.distributed.Client`. The Dask JupyterLab
-   extension gives you a GUI for the same. See
-   `reference/swan-htcondor.md` for the snippet.
+   extension gives you a GUI for the same. Upstream docs:
+   https://swan.docs.cern.ch/condor/intro/.
 3. Use any Dask-aware framework — distributed RDataFrame, coffea with
    the Dask executor, or `dask.dataframe`/`dask.array`.
 4. Once the analysis stabilises, dump the driver to a `.py` file and
@@ -140,7 +138,7 @@ anything."
 - Start with `cluster.scale(2-4)`, not hundreds — you share the farm.
 - Version drift on `dask-lxplus` / `SwanHTCondorCluster` is real;
   check the upstream docs if imports break.
-- CPU only. For GPU work see `reference/cern-gpus.md`.
+- CPU only. For GPU work see https://clouddocs.web.cern.ch/gpu_overview.html.
 
 **Next skill** — none specific; this is an infra-only recipe.
 `reana-workflows` when pinning the script for reproducibility.
@@ -185,8 +183,8 @@ the grid).
 
 **Steps**
 1. `ssh lxplus.cern.ch`; `setupATLAS && lsetup rucio`.
-2. Set up auth: `voms-proxy-init -voms atlas` (or configure OIDC). See
-   `rucio` skill → `reference/auth.md`.
+2. Set up auth: `voms-proxy-init -voms atlas` (or configure OIDC). The
+   `rucio` skill covers the auth-type matrix.
 3. Locate the dataset: `rucio did list '<scope>:<pattern>'` →
    `rucio did show <did>` → `rucio replica list dataset <did>`.
 4. For local batch: write a `condor_submit` file that reads the

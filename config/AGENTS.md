@@ -66,6 +66,30 @@ repo at *Skill Library Design Guide — CERN Assistant*; consult its
 **Principle 7 growth checklist** before merging any new skill or
 MCP tool.
 
+## Output rules
+
+The user sees only the assistant's reply. Files inside the skill
+bundles on CVMFS — `reference/*.md`, `catalog.yaml`, anything under
+`config/skills/**/` — are **loading instructions for Claude, not
+citations for the user**. Quoting their paths in a reply produces
+unactionable text (the user can't open them from the lumi/lxplus
+interface).
+
+When emitting the reply:
+
+- **Cite skill names** (`rucio`, `physlite-basics`, `reana-workflows`,
+  `infra-advisor`). The user can re-prompt with them.
+- **Cite canonical upstream URLs** when pointing at deeper detail
+  (`https://swan.docs.cern.ch/condor/intro/`,
+  `https://clouddocs.web.cern.ch/gpu_overview.html`,
+  `https://reana.cern.ch`, `https://opendata.atlas.cern`,
+  `https://docs.reana.io/getting-started/`). Each digest pins its
+  upstream URL at the top of the file — pull from there.
+- **Never quote internal paths** in the user reply: no
+  `reference/swan-htcondor.md`, no `reference/auth.md`, no
+  `reference/commands.md`, no `catalog.yaml`. Read them silently
+  and synthesise.
+
 ## Guidelines
 
 - When the user describes a **goal** at the infra level — stitching

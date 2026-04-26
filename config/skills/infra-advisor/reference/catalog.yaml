@@ -138,8 +138,8 @@ services:
     skill: null
     integrates_with: [cvmfs, eos-public, atlas-opendata, cern-opendata, rucio, ml-cern, htcondor]
     notes:
-      - Supports "interactive-plus-batch" via Dask-HTCondor (see reference/swan-htcondor.md).
-      - Exposes T4 GPUs when requested in the session form (see reference/cern-gpus.md).
+      - Supports "interactive-plus-batch" via Dask-HTCondor (upstream: https://swan.docs.cern.ch/condor/intro/).
+      - Exposes T4 GPUs when requested in the session form (upstream: https://clouddocs.web.cern.ch/gpu_overview.html).
     use_when:
       - User has a CERN account and wants an interactive notebook.
       - Need ROOT / ATLAS / CMS software stacks on CVMFS out of the box.
@@ -218,7 +218,7 @@ services:
     integrates_with: [lxplus, swan, htcondor, reana, ml-cern, rucio, cvmfs, eos-public, gitlab-cern]
     notes:
       - Not a single product but an umbrella over multiple services that interoperate through shared storage (EOS, CVMFS) and shared auth (CERN SSO, VOMS).
-      - Typical path through it — develop on SWAN → scale on HTCondor (see `reference/swan-htcondor.md`) → preserve on REANA → train on ml.cern.ch (see `reference/cern-gpus.md`) → data via Rucio.
+      - Typical path through it — develop on SWAN → scale on HTCondor → preserve on REANA → train on ml.cern.ch → data via Rucio.
     use_when:
       - User has a CERN account and a multi-stage analysis (develop → scale → preserve → ML).
       - They ask "which analysis facility at CERN" or "how do the CERN services fit together".
