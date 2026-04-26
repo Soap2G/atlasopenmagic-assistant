@@ -1,6 +1,7 @@
 ---
 name: sm-analyses
-description: Guided walkthroughs of the seven Standard Model analyses in the 13 TeV 2025 ATLAS Open Data docs (Find_the_Z, HZZ, Hyy, Hmumu, Hbb, ttbar, WZ3l). Load when the user names one of those processes or asks to "rediscover" the Higgs, Z, or top.
+description: Use when the user names a Standard Model process and wants to "rediscover" it with the public ATLAS Open Data — Z→ll, H→ZZ→4l, H→γγ, H→μμ, H→bb, t-tbar, or WZ→3l+ν. Pairs the process to its docs section in `13TeV25Doc/StandardModel` and its notebook in `notebooks-collection-opendata/13-TeV-examples/uproot_python/`. Does NOT cover BSM searches, generic notebook indexing by filename (use `atlas-notebooks`), or analysis-code authoring (use `physlite-basics` or the `analysis` agent). Disambiguator phrase: SM walkthrough by process.
+data_scope: open
 ---
 
 ## Scope

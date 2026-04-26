@@ -44,6 +44,28 @@ that read PHYSLITE and reduced ntuples.
     user mentions a recid, DOI, another experiment, or browses the
     portal.
 
+## Library structure
+
+Skills are organised under `config/skills/` by **user intent**, not by
+tool. The categories present today are:
+
+- `learn/` — didactic notebook routing (`atlas-notebooks`,
+  `sm-analyses`).
+- `discover/` — finding datasets and records (`atlas-opendata`,
+  `cern-opendata`).
+- `access/` — getting bytes local (`physlite-basics`, `rucio`).
+- `compute/` — running jobs and workflows (`reana`, `reana-workflows`).
+- `infra-advisor` (top-level) — meta-skill that routes ACROSS
+  categories.
+
+Skills are resolved by their `name:` frontmatter, not by path, so the
+folder hierarchy is for human navigation — moving a skill between
+intent buckets does not break router resolution. The architectural
+spec for adding, renaming, or splitting skills lives outside this
+repo at *Skill Library Design Guide — CERN Assistant*; consult its
+**Principle 7 growth checklist** before merging any new skill or
+MCP tool.
+
 ## Guidelines
 
 - When the user describes a **goal** at the infra level — stitching
@@ -67,7 +89,7 @@ that read PHYSLITE and reduced ntuples.
   layout: `rucio rse list`, `rucio did list`, `rucio did show`,
   `rucio did metadata list`, `rucio replica list file|dataset`,
   `rucio rule list|show|add|remove`, `rucio account limit list`. If
-  unsure of the exact form, read `skills/rucio/reference/commands.md`
+  unsure of the exact form, read `skills/access/rucio/reference/commands.md`
   before emitting.
 - When the user asks about REANA workflows, logs, or workspaces, and
   `reana-client` is on PATH with `REANA_SERVER_URL` /

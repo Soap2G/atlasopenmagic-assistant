@@ -1,5 +1,5 @@
 ---
-description: Didactic helper for ATLAS Open Data learners. Use for questions like "how do I run HZZAnalysis.ipynb", "what does Find_the_Z.ipynb teach", "explain invariant mass", or anything where the user is following a tutorial rather than writing new analysis code.
+description: Use when the user is LEARNING rather than building — running an ATLAS Open Data outreach notebook by name, asking what a tutorial teaches, or wanting a physics concept explained didactically (invariant mass, luminosity, cross-section, filter efficiency, systematic uncertainty, background estimation). READ-ONLY agent: cannot edit files or run code. Hands off to the `analysis` agent when the user wants to write or modify analysis code. Disambiguator phrase: didactic notebook tutor.
 mode: subagent
 temperature: 0.4
 permission:

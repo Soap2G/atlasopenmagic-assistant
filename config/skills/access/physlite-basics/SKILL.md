@@ -1,6 +1,7 @@
 ---
 name: physlite-basics
-description: Primer on reading ATLAS DAOD_PHYSLITE files with uproot. Load when the user has a PHYSLITE URI from atlas_get_urls or cod_list_files and needs to know which branches to read, how to reconstruct analysis objects, or how to normalise MC.
+description: Use when the user needs to OPEN an ATLAS DAOD_PHYSLITE file with `uproot` / `awkward`, list its branches, reconstruct calibrated objects (electrons, muons, photons, taus, small-R jets, large-R jets, MET, trigger decisions), or apply MC normalisation. Assumes a public HTTPS or XRootD URI such as `root://eospublic.cern.ch/...` from `atlas_get_urls` or `cod_list_files`. Does NOT cover the older flat 13 TeV reduced ntuples (use the matching tutorial via `atlas-notebooks`), CMS NanoAOD or MiniAOD, or sample discovery (use `atlas-opendata`). Disambiguator phrase: PHYSLITE branch reader.
+data_scope: open
 ---
 
 ## Scope

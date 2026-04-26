@@ -1,6 +1,7 @@
 ---
 name: cern-opendata
-description: Query the CERN Open Data portal (opendata.cern.ch) across CMS, ATLAS, LHCb, ALICE, and OPERA using the cernopendata MCP tools. Load this skill when the user asks about records identified by `recid`, DOI, or exact title; browses collections; or wants file URIs for a portal record regardless of experiment. For ATLAS-specific Monte Carlo sample lookups (DSIDs, `physics_short`, cross-sections tied to a named ATLAS release), load the `atlas-opendata` skill instead.
+description: Use when the user has a CERN Open Data `recid`, DOI, or exact record title and needs portal-level metadata, file URIs, container images, or supplementary files across CMS, ATLAS, LHCb, ALICE, or OPERA. Backed by the `cernopendata` MCP at opendata.cern.ch. Does NOT cover ATLAS Monte Carlo metadata by DSID or `physics_short` (use `atlas-opendata`) or collaboration-internal datasets (use `rucio`). Disambiguator phrase: opendata.cern.ch recid resolver.
+data_scope: open
 ---
 
 ## Scope

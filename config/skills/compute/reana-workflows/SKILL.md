@@ -1,6 +1,7 @@
 ---
 name: reana-workflows
-description: Use this skill to help the user design, write, and run a REANA workflow end-to-end — authoring `reana.yaml`, choosing an engine (serial, cwl, yadage, snakemake), parameterizing steps, and executing the build-upload-start-download loop with `reana-client`. Load when the user asks how to "build a REANA workflow", "write a reana.yaml", "run my analysis on REANA", or "reproduce an analysis on reana.cern.ch". For troubleshooting an already-running workflow (status, logs), use the `reana` skill instead.
+description: Use when the user is AUTHORING a new `reana.yaml` from scratch — picking an engine (serial / cwl / yadage / snakemake), declaring inputs / workflow / outputs, parameterising steps, and walking the `validate → create → upload → start → download` cycle for the first time. Pairs with `reference/schema.md` for field-level details and `reference/engines.md` for engine templates. Does NOT cover triaging an already-running workflow on the cluster (use `reana`) or grid submission outside REANA. Disambiguator phrase: reana.yaml authoring cycle.
+data_scope: both
 ---
 
 ## Scope

@@ -1,6 +1,7 @@
 ---
 name: rucio
-description: Use the Rucio CLI (v36+, noun-verb layout: `rucio did list`, `rucio rse list`, `rucio rule add` — NEVER the deprecated flat verbs `list-dids`, `list-rses`, `add-rule`) to look up datasets, files, replicas, metadata, and transfer rules for authenticated ATLAS (or other VO) users. Load only when the user is on lxplus or has a local Rucio client with a valid credential; do NOT load for public ATLAS Open Data workflows (those use atlas_get_urls / cod_list_files). Prefer read-only commands; every write operation must be confirmed.
+description: Use when the user runs the Rucio v38+ CLI on lxplus, SWAN, or a CVMFS-staged client (under `/cvmfs/sw.escape.eu/rucio/<version>/`) and needs to query DIDs, RSEs, replicas, metadata, or replication rules for collaboration-internal data. ALWAYS noun-verb (`rucio rse list`, `rucio did show`, `rucio rule add`); NEVER the deprecated flat verbs (`list-rses`, `list-dids`, `add-rule`, `get-metadata`, `rule-info`). Targets non-public datasets — for ATLAS Open Data DSIDs use `atlas-opendata` instead; for grid submission use PanDA, not Rucio directly. Disambiguator phrase: rucio v38 noun-verb.
+data_scope: internal
 ---
 
 ## CRITICAL: emit only v38+ noun-verb commands

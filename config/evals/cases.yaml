@@ -1,0 +1,100 @@
+# Skill-router eval cases.
+#
+# Per Principle 8 of the Skill Library Design Guide, the eval harness
+# is the only reliable way to detect the confusability cliff. Each
+# entry under `should_match` lists prompts that MUST select that skill
+# or agent. `should_not_match` are prompts the router should answer
+# with NONE (no skill applies).
+#
+# When you add a skill, add 3-5 prompts here (Principle 7 step 7).
+# When `python run.py` reports a regression on a previously-passing
+# skill after a description change, that's the cliff arriving locally
+# (Principle 8 warning sign) — fix the description before merging.
+
+should_match:
+  - skill: atlas-notebooks
+    prompts:
+      - "How do I run HZZAnalysis.ipynb?"
+      - "Which notebook teaches Higgs to gamma gamma in the outreach repo?"
+      - "Do the 13 TeV uproot tutorials run on Binder or do I need SWAN?"
+      - "Where is Find_the_Z.ipynb in the notebooks-collection-opendata repo?"
+
+  - skill: sm-analyses
+    prompts:
+      - "I want to rediscover the Higgs in H to ZZ to 4 leptons."
+      - "Walk me through the t-tbar Standard Model measurement with public ATLAS data."
+      - "How is WZ to three leptons measured in the 2025 docs?"
+      - "I want to redo the H to mu mu Standard Model walkthrough."
+
+  - skill: atlas-opendata
+    prompts:
+      - "What is the cross-section for DSID 410470?"
+      - "Get me the file URLs for ttbar samples in the 2024r-pp release."
+      - "What's the kFactor and filter efficiency for physics_short Wjets?"
+      - "Switch to the 2025r-evgen-13tev release and list its datasets."
+
+  - skill: cern-opendata
+    prompts:
+      - "Fetch the metadata for recid 12345 on opendata.cern.ch."
+      - "List the files attached to a CMS primary dataset by its DOI."
+      - "Find a published LHCb open-data analysis example by exact title."
+      - "What's the container image for portal record 27360?"
+
+  - skill: physlite-basics
+    prompts:
+      - "How do I open a DAOD_PHYSLITE file with uproot?"
+      - "Which branches do I read for calibrated muons in PHYSLITE?"
+      - "Reconstruct small-R jets and MET from a PHYSLITE file."
+      - "Apply the MC normalisation formula when reading PHYSLITE."
+
+  - skill: rucio
+    prompts:
+      - "How do I list RSEs with the Rucio v38 CLI?"
+      - "Show the contents of an internal DID with rucio did show."
+      - "Add a replication rule for an mc23 dataset to CERN-PROD."
+      - "Find replicas of a non-public dataset on the grid."
+
+  - skill: reana
+    prompts:
+      - "What's the status of my running REANA workflow?"
+      - "Download the outputs of run 7 of myworkflow on reana.cern.ch."
+      - "Show me the logs of a failed REANA job."
+      - "List my workspaces on the REANA cluster."
+
+  - skill: reana-workflows
+    prompts:
+      - "How do I write a reana.yaml from scratch for my analysis?"
+      - "Which REANA engine should I pick: serial, snakemake, cwl, or yadage?"
+      - "Build a REANA workflow that runs my fit script and saves a plot."
+      - "Walk me through validate, create, upload, start, download for a new REANA workflow."
+
+  - skill: infra-advisor
+    prompts:
+      - "I want to run distributed analysis on Open Data and train an ML model."
+      - "Which CERN services should I stitch for a reproducible Higgs analysis?"
+      - "How should I scale my notebook to a few hundred core-hours at CERN?"
+      - "Where do I run a GPU training job at CERN — SWAN, ml.cern.ch, or OpenStack?"
+
+  - agent: tutor
+    prompts:
+      - "Explain invariant mass and why it shows a peak at the Z boson mass."
+      - "What does the HZZ tutorial teach about backgrounds and systematics?"
+      - "Help me understand why we apply a luminosity factor when normalising MC."
+
+  - agent: analysis
+    prompts:
+      - "Write me a coffea processor that selects ttbar dilepton events."
+      - "Plot the dimuon invariant mass with hist and mplhep from a PHYSLITE file."
+      - "Compute the pT of the leading jet event-by-event with awkward."
+
+# Prompts that should NOT pull any skill or agent. Used to test the
+# router's "NONE" path. The harness expects the router to abstain.
+should_not_match:
+  - "What is the speed of light in vacuum?"
+  - "Tell me a joke about physicists."
+  - "How do I install Python on Ubuntu 24.04?"
+  - "What's the weather in Geneva today?"
+  - "Explain Bayesian probability in plain English."
+  - "Help me debug a Rust borrow checker error."
+  - "Summarise today's news headlines."
+  - "Translate 'hello world' into French."

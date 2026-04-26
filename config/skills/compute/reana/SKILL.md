@@ -1,6 +1,7 @@
 ---
 name: reana
-description: Use the reana-client CLI to inspect, launch, and retrieve outputs from REANA workflows (https://reana.cern.ch or another REANA deployment). Load when the user has `reana-client` on PATH, REANA_SERVER_URL and REANA_ACCESS_TOKEN set, and asks about workflows, jobs, logs, or files on a REANA cluster.
+description: Use when the user has an ALREADY-CREATED REANA workflow on a REANA cluster (https://reana.cern.ch or other deployment) and needs to inspect status, fetch logs, list workspaces, or download outputs with `reana-client`. Assumes `REANA_SERVER_URL` and `REANA_ACCESS_TOKEN` are set and `reana-client ping` succeeds. Does NOT cover authoring a new `reana.yaml` from scratch (use `reana-workflows`), generic Jupyter execution, or Rucio data movement. Disambiguator phrase: reana-client status triage.
+data_scope: both
 ---
 
 ## Scope
