@@ -1,6 +1,6 @@
 cff-version: 1.2.0
 message: "If you use this software in academic work, please cite it as below."
-title: "open-data-assistant-config (lumi-assistant): an opencode configuration for ATLAS Open Data and CERN Open Data"
+title: "lumi-assistant: an opencode configuration for ATLAS Open Data and CERN Open Data"
 abstract: >
   A configuration bundle for the opencode / lumi agent CLI, providing
   intent-organised skills, sub-agent personas, remote MCP wiring

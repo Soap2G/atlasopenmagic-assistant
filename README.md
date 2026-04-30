@@ -4,14 +4,75 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Citation: CFF](https://img.shields.io/badge/cite-CITATION.cff-blue.svg)](CITATION.cff)
 
-Standalone [opencode](https://opencode.ai) configuration for the
-**ATLAS Open Data assistant**, packaged for direct CVMFS deployment.
+A pluggable [opencode](https://opencode.ai) configuration that turns
+opencode (or its CERN-flavoured sibling **Lumi**) into a **general
+CERN assistant** — open data, service operations (Rucio, REANA, EOS,
+CRIC, SWAN, lxbatch, …), physics analysis, detector
+and MC reference, and anything else CERN-shaped that someone bothers
+to write a skill for.
 
 The repo root IS the CVMFS payload. After cloning or `rsync`ing to
-CVMFS, users source `bin/setup.sh` and the assistant becomes available
-from any working directory.
+CVMFS, users source `bin/setup.sh` and the assistant becomes
+available from any working directory on lxplus / SWAN / any
+workstation with the mount.
+
+## Why this exists
+
+CERN services field thousands of low-complexity tickets a year that
+have well-documented answers but still consume an expert's time. A
+human ticket is the most expensive way to deliver a documented answer.
+
+This repo is the substrate for an LLM-driven assistant that absorbs
+the answerable layer:
+
+- **Service teams** (Rucio, REANA, EOS, CRIC, SWAN, lxbatch, IT-DB,
+  CMSWEB, …) write a skill bundle once; the router pulls it in
+  whenever a user query matches the trigger condition.
+- **Analysis groups** (ATLAS, CMS, LHCb, ALICE) contribute skills
+  that walk through their framework, ntuple format, or workflow.
+- **Outreach and students** contribute didactic skills against the
+  public open-data releases.
+
+The router doesn't care who wrote a skill or where it lives in the
+folder tree — skills resolve by their `name:` frontmatter. Drop a
+`SKILL.md` into the intent bucket that matches the *user's* goal,
+follow the [Skill Library Design Guide](docs/skill-design.md)
+(especially **Principle 7** — the per-skill growth checklist plus
+3–5 eval prompts), and it ships on the next CVMFS publish.
+
+## How skills compose
+
+Skills don't have to live in this repo. Three layers stack:
+
+| Layer | Where it lives | Who writes it | When it loads |
+|---|---|---|---|
+| **Repo skills** | `config/skills/` here | Anyone with a merged PR | Every CVMFS user, every session |
+| **Personal / draft skills** | Any dir + `OPENCODE_CONFIG_DIR` override | A service team testing locally | Only when you point `setup.sh` at it |
+| **Project-local skills** | `.opencode/` in a project | Per-project authors | Only inside that project (toggle via `OPENCODE_DISABLE_PROJECT_CONFIG`) |
+
+The contribution flow for an upstream-mergeable skill:
+
+1. Author the `SKILL.md` against your service / framework / domain.
+2. Place it under the intent category that matches the *user's* goal,
+   not your tool name (Principle 1 of the design guide — yes, your
+   instinct will be wrong; read the guide).
+3. Add 3–5 prompts to `config/evals/cases.yaml` that should select it,
+   plus 2 that should not.
+4. Run `python config/evals/lint.py` from the repo root.
+5. Open a PR. CI runs lint on every PR and the full skill-router eval
+   on push to `main`.
+
+If you maintain a CERN service and want to onboard your skill
+backlog, see the [Validation](#validation) section for the local dev
+loop and open an issue tagged `service-onboarding` to coordinate.
 
 ## Layout
+
+The skills present today are the **seed library** — the project
+deliberately starts narrow (open data) so the routing pattern is
+exercised at small scale before the library expands toward the full
+CERN scope (see the design guide for the eight intent categories the
+library is designed to grow into).
 
 ```
 open-data-assistant-config/
@@ -62,8 +123,8 @@ export ANTHROPIC_API_KEY=sk-ant-...
 opencode    # or `lumi` if using the CVMFS-deployed binary
 ```
 
-`opencode` will load providers, MCP endpoints, the ATLAS Open Data
-persona, the two sub-agents, and the five skills regardless of CWD.
+`opencode` will load providers, MCP endpoints, the top-level persona,
+every sub-agent, and every skill bundle regardless of CWD.
 
 To layer a local project `.opencode/` on top (override certain
 settings per-project), comment out the `OPENCODE_DISABLE_PROJECT_CONFIG`
@@ -134,8 +195,9 @@ This repo is a sibling of Lumi:
 - **Lumi** (`/cvmfs/sw.escape.eu/lumi/`) ships the opencode **binary**
   and a CERN-developer config (LiteLLM, Rucio/EOS permissions).
 - **open-data-assistant-config** (this repo) ships **only a config
-  directory**, aimed at ATLAS Open Data users with Binder / Colab /
-  SWAN / local workflows.
+  directory** — currently seeded with open-data skills, designed to
+  grow into a general CERN-assistant skill library contributed by
+  service teams, analysis groups, and outreach.
 
 They coexist: the Lumi binary is perfectly capable of loading this
 repo's config. Once both are on CVMFS:
@@ -178,38 +240,13 @@ This runs in CI on push to `main`, on manual workflow dispatch, and on
 PRs from the same repository (forks skip it because the secret isn't
 exposed).
 
-## Roadmap
-
-In rough priority order. Issues / PRs welcome on any of these.
-
-- [x] **Add an ORCID** to `CITATION.cff` (done — Zenodo DOI still
-      pending; mint on next tagged release).
-- [x] **Vendor the *Skill Library Design Guide — CERN Assistant***
-      into `docs/skill-design.md` (done — keep the in-repo copy in sync
-      with the Obsidian original).
-- [ ] **Tool-use observability.** Log every MCP call and skill load
-      with latency + outcome to catch silently-broken skills (pattern
-      borrowed from [archi PR #557](https://github.com/archi-physics/archi/pull/557)).
-- [ ] **Comparative evals.** Extend `cases.yaml` from binary
-      pass/fail to A/B scoring across persona variants and models
-      (Anthropic vs CERN LiteLLM gateway).
-- [ ] **Public benchmarking page.** Publish the eval pass rate per
-      skill × model so adopters know what works on lxplus / SWAN.
-- [ ] **Mattermost / Piazza / mailbot interface.** The configs are
-      runtime-agnostic; wiring one of them would extend reach beyond
-      CLI users on lxplus.
-- [ ] **Pin MCP server versions** in `opencode.json` once the
-      `atlasopenmagic-mcp` and `cernopendata-mcp` servers expose a
-      `version` field — protects CVMFS-pinned releases from upstream
-      drift.
-- [ ] **Add a co-maintainer.** The biggest sustainability risk today
-      is bus-factor 1.
-
 ## Citation
 
-If you use this configuration in academic work, see [`CITATION.cff`](CITATION.cff).
-GitHub renders a "Cite this repository" button from that file once
-populated; once a Zenodo DOI is minted, replace the placeholder.
+If you cite or reference this configuration in academic work, internal
+service documentation, or contributor write-ups, see
+[`CITATION.cff`](CITATION.cff). GitHub renders a "Cite this repository"
+button from that file; once a Zenodo DOI is minted, the placeholder
+in `CITATION.cff` should be replaced.
 
 ## License
 
@@ -219,7 +256,5 @@ analysis-tools ecosystem.
 
 ## Contributing
 
-See the sibling repo `open-data-assistant` for a longer-form
-contributors' guide (how to author a SKILL.md, add a sub-agent, etc.).
 Anything you change in `config/` ships on next `--publish`. Run
 `python config/evals/lint.py` before pushing.
