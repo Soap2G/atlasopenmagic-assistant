@@ -1,0 +1,33 @@
+cff-version: 1.2.0
+message: "If you use this software in academic work, please cite it as below."
+title: "open-data-assistant-config (lumi-assistant): an opencode configuration for ATLAS Open Data and CERN Open Data"
+abstract: >
+  A configuration bundle for the opencode / lumi agent CLI, providing
+  intent-organised skills, sub-agent personas, remote MCP wiring
+  (atlasopenmagic, cernopendata) and CVMFS-deployable packaging for
+  ATLAS Open Data and broader CERN Open Data workflows on Binder,
+  Colab, SWAN, lxplus, and local Jupyter installs.
+type: software
+authors:
+  - family-names: Guerrieri
+    given-names: Giovanni
+    affiliation: "CERN / ATLAS Collaboration"
+    orcid: "https://orcid.org/0000-0002-3403-1177"
+repository-code: "https://github.com/Soap2G/lumi-assistant"
+url: "https://github.com/Soap2G/lumi-assistant"
+license: MIT
+keywords:
+  - high-energy-physics
+  - HEP
+  - ATLAS
+  - CERN
+  - open-data
+  - LLM
+  - agent
+  - opencode
+  - MCP
+  - CVMFS
+# Once the repo is archived to Zenodo, fill these in:
+# doi: "10.5281/zenodo.XXXXXXX"
+# version: "1.0.1"
+# date-released: "2026-04-26"

@@ -40,12 +40,24 @@ DEFAULT_MODEL = os.environ.get("EVAL_MODEL", "claude-haiku-4-5")
 
 
 def load_frontmatter(path: Path) -> dict:
-    """Parse the leading YAML frontmatter of a markdown file."""
+    """Parse the leading frontmatter of a markdown file.
+
+    Uses a forgiving line-oriented regex for `name:` and `description:`
+    rather than `yaml.safe_load`, because skill descriptions intentionally
+    contain `": "` (e.g. "Disambiguator phrase: …") which strict YAML
+    rejects as an unquoted scalar.
+    """
     text = path.read_text(encoding="utf-8")
-    m = re.match(r"^---\n(.*?)\n---", text, flags=re.DOTALL)
+    m = re.match(r"^---\r?\n(.*?)\r?\n---", text, flags=re.DOTALL)
     if not m:
         return {}
-    return yaml.safe_load(m.group(1)) or {}
+    fm = m.group(1)
+    out: dict[str, str] = {}
+    for key in ("name", "description"):
+        line = re.search(rf"^{key}:\s*(.+?)\s*$", fm, flags=re.MULTILINE)
+        if line:
+            out[key] = line.group(1).strip()
+    return out
 
 
 def collect_skills() -> list[dict]:

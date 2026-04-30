@@ -1,5 +1,9 @@
 # open-data-assistant-config
 
+[![checks](https://github.com/Soap2G/lumi-assistant/actions/workflows/checks.yml/badge.svg)](https://github.com/Soap2G/lumi-assistant/actions/workflows/checks.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Citation: CFF](https://img.shields.io/badge/cite-CITATION.cff-blue.svg)](CITATION.cff)
+
 Standalone [opencode](https://opencode.ai) configuration for the
 **ATLAS Open Data assistant**, packaged for direct CVMFS deployment.
 
@@ -13,21 +17,31 @@ from any working directory.
 open-data-assistant-config/
 ├── config/                        ← OPENCODE_CONFIG_DIR target
 │   ├── opencode.json              ← providers (anthropic/openai/litellm), MCPs, permissions
-│   ├── AGENTS.md                  ← top-level persona
+│   ├── AGENTS.md                  ← top-level persona + critical rules
 │   ├── agents/
 │   │   ├── tutor.md               ← didactic, read-only
 │   │   └── analysis.md            ← hands-on analysis
+│   ├── evals/
+│   │   ├── cases.yaml             ← prompt × expected-skill ground truth
+│   │   ├── run.py                 ← skill-router eval harness (needs API key)
+│   │   ├── lint.py                ← structural validator (no network)
+│   │   └── README.md
 │   └── skills/
-│       ├── atlas-opendata/        ← atlasopenmagic MCP wrapper
-│       ├── cern-opendata/         ← cernopendata MCP wrapper
-│       ├── atlas-notebooks/       ← outreach notebook index
-│       ├── physlite-basics/       ← DAOD_PHYSLITE + uproot primer
-│       └── sm-analyses/           ← 7 SM walkthroughs
+│       ├── learn/                 ← atlas-notebooks, sm-analyses
+│       ├── discover/              ← atlas-opendata, cern-opendata
+│       ├── access/                ← physlite-basics, rucio
+│       ├── compute/               ← reana, reana-workflows
+│       └── infra-advisor/         ← cross-category routing
+├── docs/
+│   └── skill-design.md            ← Skill Library Design Guide (vendor target)
 ├── bin/
 │   └── setup.sh                   ← sourced by users (any prefix)
 ├── script/
 │   └── cvmfs-deploy.sh            ← stage and optionally publish
+├── .github/workflows/checks.yml   ← lint on every PR + evals on main
 ├── VERSION                        ← semver string; drives the staged directory name
+├── LICENSE                        ← MIT
+├── CITATION.cff                   ← citable artefact metadata
 ├── README.md
 └── .gitignore
 ```
@@ -138,8 +152,74 @@ is loaded *after* the Lumi `OPENCODE_CONFIG` file by opencode's config
 loader ([config.ts:1317-1352](https://github.com/opencode-ai/opencode/blob/dev/packages/opencode/src/config/config.ts)),
 so this config wins on overlap.
 
+## Validation
+
+Before opening a PR, run the structural validator from the repo root:
+
+```bash
+pip install pyyaml
+python config/evals/lint.py
+```
+
+This checks frontmatter, name uniqueness, and `cases.yaml` references
+without making any network calls — safe to run anywhere, including
+forks. The same job runs in CI on every PR.
+
+To run the full skill-router eval harness (sends prompts to a real
+model and scores router accuracy):
+
+```bash
+export ANTHROPIC_API_KEY=sk-ant-...
+pip install pyyaml httpx
+python config/evals/run.py
+```
+
+This runs in CI on push to `main`, on manual workflow dispatch, and on
+PRs from the same repository (forks skip it because the secret isn't
+exposed).
+
+## Roadmap
+
+In rough priority order. Issues / PRs welcome on any of these.
+
+- [x] **Add an ORCID** to `CITATION.cff` (done — Zenodo DOI still
+      pending; mint on next tagged release).
+- [x] **Vendor the *Skill Library Design Guide — CERN Assistant***
+      into `docs/skill-design.md` (done — keep the in-repo copy in sync
+      with the Obsidian original).
+- [ ] **Tool-use observability.** Log every MCP call and skill load
+      with latency + outcome to catch silently-broken skills (pattern
+      borrowed from [archi PR #557](https://github.com/archi-physics/archi/pull/557)).
+- [ ] **Comparative evals.** Extend `cases.yaml` from binary
+      pass/fail to A/B scoring across persona variants and models
+      (Anthropic vs CERN LiteLLM gateway).
+- [ ] **Public benchmarking page.** Publish the eval pass rate per
+      skill × model so adopters know what works on lxplus / SWAN.
+- [ ] **Mattermost / Piazza / mailbot interface.** The configs are
+      runtime-agnostic; wiring one of them would extend reach beyond
+      CLI users on lxplus.
+- [ ] **Pin MCP server versions** in `opencode.json` once the
+      `atlasopenmagic-mcp` and `cernopendata-mcp` servers expose a
+      `version` field — protects CVMFS-pinned releases from upstream
+      drift.
+- [ ] **Add a co-maintainer.** The biggest sustainability risk today
+      is bus-factor 1.
+
+## Citation
+
+If you use this configuration in academic work, see [`CITATION.cff`](CITATION.cff).
+GitHub renders a "Cite this repository" button from that file once
+populated; once a Zenodo DOI is minted, replace the placeholder.
+
+## License
+
+[MIT](LICENSE) — same as [opencode](https://github.com/sst/opencode),
+[archi](https://github.com/archi-physics/archi), and the broader HEP
+analysis-tools ecosystem.
+
 ## Contributing
 
 See the sibling repo `open-data-assistant` for a longer-form
 contributors' guide (how to author a SKILL.md, add a sub-agent, etc.).
-Anything you change in `config/` ships on next `--publish`.
+Anything you change in `config/` ships on next `--publish`. Run
+`python config/evals/lint.py` before pushing.
