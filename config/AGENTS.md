@@ -122,6 +122,46 @@ When emitting the reply:
   `reference/commands.md`, no `catalog.yaml`. Read them silently
   and synthesise.
 
+## Scope filtering
+
+Every skill carries a `data_scope: open | internal | both` frontmatter
+field declaring which data world it targets:
+
+- `open` — works only against the public ATLAS / CERN Open Data
+  releases. URIs are public HTTPS / XRootD; no auth required.
+- `internal` — works only against non-public data via Rucio / EOS /
+  lxplus / PanDA. Requires VOMS proxy or OIDC.
+- `both` — works in either world (e.g. a workflow engine, an
+  infrastructure router, a verification gate).
+
+Personas declare which scopes they accept via `accepts_data_scope`
+in their frontmatter. Today both `tutor` and `analysis` accept
+`[open, both]` — they are the Open Data audience. Future personas
+(an ATLAS-internal analysis helper, a CMS framework helper, a
+service-engineer persona) will accept `[internal, both]` or some
+mix.
+
+**Routing contract**: when a persona declares `accepts_data_scope`,
+only consider skills whose `data_scope` is in that set. If the user
+query implies a data scope outside the active persona's set — for
+example, a `tutor`-scoped user asking for SM analysis help on
+non-public ATLAS MC samples, or for Rucio-based dataset discovery —
+**do not pull an open-scope skill as a substitute**. The skill names
+in this config are deliberately generic (`sm-analyses`,
+`physlite-basics`, …) but the *content* is Open Data-flavored;
+routing them to an internal-audience prompt produces a confidently
+wrong answer.
+
+The right response in that case: state that this audience does not
+cover the request, and redirect to the canonical internal entry
+point (ATLAS internal twikis, lxplus + `setupATLAS`, the experiment's
+analysis support channel). Silence + redirect beats a wrong
+open-data answer on an internal question.
+
+The same rule runs the other way once internal-scope personas exist:
+they should not silently substitute Open Data sources when the user
+wants real collaboration data.
+
 ## Guidelines
 
 - When the user describes a **goal** at the infra level — stitching

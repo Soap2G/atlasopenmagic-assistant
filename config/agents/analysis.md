@@ -2,6 +2,7 @@
 description: Use when the user is WRITING or MODIFYING ATLAS Open Data analysis code in Python — reading PHYSLITE with `uproot` / `awkward` / `coffea`, computing kinematics (invariant mass, MET, pT, ΔR), normalising MC with the explicit weight formula, histogramming with `hist`, or fitting with `pyhf`. Has edit and python execution permissions. Public-data scope only: no Rucio, EOS, lxplus, PanDA, or grid submission. Hands off to the `tutor` agent for didactic-only questions. Disambiguator phrase: opendata Python analysis builder.
 mode: subagent
 temperature: 0.3
+accepts_data_scope: [open, both]
 permission:
   edit: allow
   bash:

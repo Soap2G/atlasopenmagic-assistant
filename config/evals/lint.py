@@ -11,9 +11,13 @@ of the following invariants are violated:
    filename stem.
 3. All names across skills + agents are unique (router collisions are
    silent failures otherwise).
-4. Every `should_match` entry in `config/evals/cases.yaml` references
+4. Every skill has a `data_scope:` field with value in
+   {open, internal, both}.
+5. Every agent has an `accepts_data_scope:` field whose values are a
+   non-empty subset of {open, internal, both}.
+6. Every `should_match` entry in `config/evals/cases.yaml` references
    a name that exists in the library.
-5. Every entry has at least one prompt; `should_not_match` is a flat
+7. Every entry has at least one prompt; `should_not_match` is a flat
    list of strings.
 
 Run from the repo root:
@@ -26,6 +30,8 @@ because skill descriptions intentionally contain `": "` (e.g.
 "Disambiguator phrase: …") which is illegal in unquoted YAML scalars.
 Quoting every description is the alternative; we chose tolerant
 parsing instead so that authors don't have to escape natural language.
+`data_scope` and `accepts_data_scope` are simple enough to parse
+strictly.
 """
 from __future__ import annotations
 
@@ -39,6 +45,8 @@ ROOT = Path(__file__).resolve().parents[2]
 SKILLS_DIR = ROOT / "config" / "skills"
 AGENTS_DIR = ROOT / "config" / "agents"
 CASES_FILE = ROOT / "config" / "evals" / "cases.yaml"
+
+VALID_SCOPES = {"open", "internal", "both"}
 
 
 def extract_frontmatter(text: str) -> str | None:
@@ -55,6 +63,23 @@ def extract_field(fm: str, key: str) -> str | None:
     pat = rf"^{re.escape(key)}:\s*(.+?)\s*$"
     m = re.search(pat, fm, flags=re.MULTILINE)
     return m.group(1).strip() if m else None
+
+
+def extract_scope_list(fm: str, key: str) -> list[str] | None:
+    """Pull a flow-style list of scope values: `key: [open, both]`.
+
+    Returns None if the key is missing, [] if present but malformed.
+    """
+    raw = extract_field(fm, key)
+    if raw is None:
+        return None
+    m = re.match(r"^\[(.*)\]$", raw)
+    if not m:
+        return []
+    inner = m.group(1).strip()
+    if not inner:
+        return []
+    return [item.strip().strip("'\"") for item in inner.split(",") if item.strip()]
 
 
 def main() -> int:
@@ -74,11 +99,18 @@ def main() -> int:
             continue
         name = extract_field(fm, "name")
         desc = extract_field(fm, "description")
+        scope = extract_field(fm, "data_scope")
         if not name:
             errors.append(f"{rel}: frontmatter missing `name:`")
             continue
         if not desc:
             errors.append(f"{rel}: frontmatter missing `description:`")
+        if scope is None:
+            errors.append(f"{rel}: frontmatter missing `data_scope:`")
+        elif scope not in VALID_SCOPES:
+            errors.append(
+                f"{rel}: data_scope={scope!r} not in {sorted(VALID_SCOPES)}"
+            )
         if name in names:
             errors.append(
                 f"{rel}: duplicate name {name!r} (also in {names[name].relative_to(ROOT)})"
@@ -95,6 +127,21 @@ def main() -> int:
             continue
         if not extract_field(fm, "description"):
             errors.append(f"{rel}: frontmatter missing `description:`")
+        accepts = extract_scope_list(fm, "accepts_data_scope")
+        if accepts is None:
+            errors.append(f"{rel}: frontmatter missing `accepts_data_scope:`")
+        elif not accepts:
+            errors.append(
+                f"{rel}: accepts_data_scope must be a non-empty flow-style list, "
+                f"e.g. [open, both]"
+            )
+        else:
+            bad = [s for s in accepts if s not in VALID_SCOPES]
+            if bad:
+                errors.append(
+                    f"{rel}: accepts_data_scope contains invalid value(s) {bad!r}; "
+                    f"allowed: {sorted(VALID_SCOPES)}"
+                )
         name = path.stem
         if name in names:
             errors.append(

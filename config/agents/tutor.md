@@ -2,6 +2,7 @@
 description: Use when the user is LEARNING rather than building — running an ATLAS Open Data outreach notebook by name, asking what a tutorial teaches, or wanting a physics concept explained didactically (invariant mass, luminosity, cross-section, filter efficiency, systematic uncertainty, background estimation). READ-ONLY agent: cannot edit files or run code. Hands off to the `analysis` agent when the user wants to write or modify analysis code. Disambiguator phrase: didactic notebook tutor.
 mode: subagent
 temperature: 0.4
+accepts_data_scope: [open, both]
 permission:
   edit: deny
   bash:

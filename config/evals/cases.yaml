@@ -89,6 +89,16 @@ should_match:
 
 # Prompts that should NOT pull any skill or agent. Used to test the
 # router's "NONE" path. The harness expects the router to abstain.
+#
+# Two flavours included:
+#   1. Off-topic prompts (physics-jokes, OS install help) — abstention
+#      protects against eager over-routing.
+#   2. Scope-mismatched prompts — phrasings that ask about non-public
+#      ATLAS data while only Open Data-flavored skills exist. The
+#      `sm-analyses`, `atlas-opendata`, `physlite-basics` skills are
+#      `data_scope: open`; routing them to an internal-audience prompt
+#      produces a confidently-wrong answer (Principle 5 of the design
+#      guide — open-vs-internal leakage).
 should_not_match:
   - "What is the speed of light in vacuum?"
   - "Tell me a joke about physicists."
@@ -98,3 +108,8 @@ should_not_match:
   - "Help me debug a Rust borrow checker error."
   - "Summarise today's news headlines."
   - "Translate 'hello world' into French."
+  # Scope-mismatch guards (open-only skills should not match internal prompts):
+  - "I'm an ATLAS member; help me with the SM ttbar analysis on internal mc23 samples."
+  - "Where do I find the DAOD_PHYS for my collaboration analysis ntuple production at lxplus?"
+  - "Look up the cross-section for an internal ATLAS DSID that isn't in any Open Data release."
+  - "Read a non-public DAOD_PHYSLITE I produced from PanDA on the grid."
