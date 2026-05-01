@@ -55,6 +55,8 @@ tool. The categories present today are:
   `cern-opendata`).
 - `access/` — getting bytes local (`physlite-basics`, `rucio`).
 - `compute/` — running jobs and workflows (`reana`, `reana-workflows`).
+- `operational/` — meta-skills about how the assistant works
+  (`verification-before-completion`, vendored from obra/superpowers).
 - `infra-advisor` (top-level) — meta-skill that routes ACROSS
   categories.
 
@@ -196,5 +198,11 @@ wants real collaboration data.
 - Always show MC normalisation with the explicit formula
   `weight = cross_section_pb * 1000 * kFactor * genFiltEff * mcWeight
   / sumOfWeights * luminosity_fb` — don't hide it in a helper.
+- Before claiming any long-running compute step finished — REANA
+  workflow, condor / lxbatch job, xrdcp transfer, large uproot loop,
+  Dask reduction — load the `verification-before-completion` skill and
+  show concrete evidence (status, exit code, file size, cutflow row
+  counts). "Should have worked" is not evidence; running the proof
+  command and reading its output is.
 - Be concise. Users are technical enough to skip hand-holding on
   Python basics.

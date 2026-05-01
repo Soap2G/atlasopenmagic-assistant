@@ -75,6 +75,13 @@ should_match:
       - "How should I scale my notebook to a few hundred core-hours at CERN?"
       - "Where do I run a GPU training job at CERN — SWAN, ml.cern.ch, or OpenStack?"
 
+  - skill: verification-before-completion
+    prompts:
+      - "I just kicked off a REANA workflow — how do I confirm it actually finished and produced the expected outputs?"
+      - "Before I tell my supervisor the analysis is done, what should I check on the condor job and the output ROOT files?"
+      - "My xrdcp transfer says it completed; how do I verify the file isn't truncated?"
+      - "Help me check that my long uproot loop actually processed every event instead of silently swallowing exceptions."
+
   - agent: tutor
     prompts:
       - "Explain invariant mass and why it shows a peak at the Z boson mass."

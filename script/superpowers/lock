@@ -1,0 +1,10 @@
+# Pinned upstream snapshot for the obra/superpowers vendoring.
+#
+# `script/sync-superpowers.sh` reads this file and rebuilds every
+# `config/skills/operational/<name>/SKILL.md` by combining the
+# corresponding `<name>.frontmatter.md` with the upstream body at
+# the pinned SHA. To update: bump `sha` and `date`, re-run the
+# script, review the diff, commit.
+repo=https://github.com/obra/superpowers
+sha=e7a2d16476bf042e9add4699c9d018a90f86e4a6
+date=2026-04-28

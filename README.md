@@ -92,13 +92,16 @@ open-data-assistant-config/
 │       ├── discover/              ← atlas-opendata, cern-opendata
 │       ├── access/                ← physlite-basics, rucio
 │       ├── compute/               ← reana, reana-workflows
+│       ├── operational/           ← verification-before-completion (vendored)
 │       └── infra-advisor/         ← cross-category routing
 ├── docs/
 │   └── skill-design.md            ← Skill Library Design Guide (vendor target)
 ├── bin/
 │   └── setup.sh                   ← sourced by users (any prefix)
 ├── script/
-│   └── cvmfs-deploy.sh            ← stage and optionally publish
+│   ├── cvmfs-deploy.sh            ← stage and optionally publish
+│   ├── sync-superpowers.sh        ← rebuild vendored skills from upstream
+│   └── superpowers/               ← lock + per-skill frontmatter overrides
 ├── .github/workflows/checks.yml   ← lint on every PR + evals on main
 ├── VERSION                        ← semver string; drives the staged directory name
 ├── LICENSE                        ← MIT
@@ -106,6 +109,26 @@ open-data-assistant-config/
 ├── README.md
 └── .gitignore
 ```
+
+### Vendored skills
+
+Some skills under `config/skills/operational/` are vendored from
+upstream repos (e.g. obra/superpowers) at a pinned commit. Vendoring
+beats submodules for this case because we always rewrite each skill's
+`description:` to anchor it to the CERN domain — generic descriptions
+out-shout our domain skills in the router (the *confusability cliff*
+the design guide warns about).
+
+The pattern: `script/superpowers/<skill>.frontmatter.md` holds our
+override for one skill, and `script/sync-superpowers.sh` combines
+that with the upstream body at the SHA pinned in `script/superpowers/lock`.
+Run `./script/sync-superpowers.sh --check` to detect drift from the
+pin; bump `sha=` and `date=` in the lock and re-run without `--check`
+to update.
+
+The upstream body changes flow through automatically; the routing-
+relevant fields (`description`, `data_scope`, `name`) stay under our
+control.
 
 ## Local dev
 
