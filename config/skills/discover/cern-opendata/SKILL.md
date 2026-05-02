@@ -1,6 +1,6 @@
 ---
 name: cern-opendata
-description: Use when the user has a CERN Open Data `recid`, DOI, or exact record title and needs portal-level metadata, file URIs, container images, or supplementary files across CMS, ATLAS, LHCb, ALICE, or OPERA. Backed by the `cernopendata` MCP at opendata.cern.ch. Does NOT cover ATLAS Monte Carlo metadata by DSID or `physics_short` (use `atlas-opendata`) or collaboration-internal datasets (use `rucio`). Disambiguator phrase: opendata.cern.ch recid resolver.
+description: Use when the user has a CERN Open Data `recid`, DOI, or exact record title and needs portal-level metadata, file URIs, container images, or supplementary files across CMS, ATLAS, LHCb, ALICE, or OPERA. Backed by the `cernopendata` MCP at opendata.cern.ch (records, files, glossary). Does NOT cover ATLAS Monte Carlo metadata by DSID or `physics_short` (use `atlas-opendata`), collaboration-internal datasets (use `rucio`), or canonical CERN service / ATLAS-software documentation (use `cern-docs` for SWAN, HTCondor, Cloud, ML@CERN, Athena docs). Disambiguator phrase: opendata.cern.ch recid resolver.
 data_scope: open
 ---
 

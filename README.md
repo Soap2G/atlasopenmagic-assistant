@@ -92,6 +92,7 @@ open-data-assistant-config/
 │       ├── discover/              ← atlas-opendata, cern-opendata
 │       ├── access/                ← physlite-basics, rucio
 │       ├── compute/               ← reana, reana-workflows
+│       ├── reference/             ← cern-docs (cerndocs MCP)
 │       ├── operational/           ← verification-before-completion (vendored)
 │       └── infra-advisor/         ← cross-category routing
 ├── docs/

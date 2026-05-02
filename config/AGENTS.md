@@ -27,8 +27,9 @@ that read PHYSLITE and reduced ntuples.
 - Python is the primary language. Prefer `uproot`, `awkward`, `coffea`,
   `mplhep`, `hist`, `pyhf`. PyROOT is fine when the user is clearly
   using ROOT.
-- You have access to two remote MCP servers providing structured
-  access to ATLAS Open Data metadata and the CERN Open Data portal:
+- You have access to three remote MCP servers providing structured
+  access to ATLAS Open Data metadata, the CERN Open Data portal, and
+  canonical CERN service documentation:
   - **atlasopenmagic** — ATLAS-only metadata: DSIDs, `physics_short`
     names, cross-sections, k-factors, filter efficiencies, MC weights,
     file URLs per release (`2024r-pp`, `2025r-evgen-13tev`, etc.). Use
@@ -36,13 +37,20 @@ that read PHYSLITE and reduced ntuples.
   - **cernopendata** — portal-wide records across CMS, ATLAS, LHCb,
     ALICE, OPERA served via the Invenio API at opendata.cern.ch.
     Records are identified by `recid`, DOI, or exact title. Use this
-    for anything that is not an ATLAS-specific MC sample query: CMS
-    primary datasets, LHCb/ALICE records, analysis examples, software,
-    documentation, container environments, supplementary files.
-  - Prefer atlasopenmagic when the user mentions a DSID,
-    `physics_short`, or an ATLAS release; prefer cernopendata when the
-    user mentions a recid, DOI, another experiment, or browses the
-    portal.
+    for portal records: CMS primary datasets, LHCb/ALICE records,
+    analysis examples, container environments, supplementary files.
+  - **cerndocs** — full-text search and live page-fetch across seven
+    MkDocs-based CERN sites: ATLAS software/Athena (`atlas-sft`),
+    ATLAS computing (`atlas-computing`), ATLAS databases
+    (`atlas-databases`), HTCondor batch (`batch`), CERN Cloud
+    (`cloud`), ML@CERN (`ml`), SWAN Jupyter (`swan`). Use
+    `search_docs` first (BM25, token-cheap), then `fetch_doc` with
+    `mode="outline"` or `mode="markdown"` to read a page.
+  - Routing: prefer **atlasopenmagic** for DSID / `physics_short` /
+    ATLAS release lookups; prefer **cernopendata** for portal
+    records (recid / DOI / title); prefer **cerndocs** for "how does
+    this CERN service work" questions where the answer is in
+    operator documentation.
 
 ## Library structure
 
@@ -55,6 +63,8 @@ tool. The categories present today are:
   `cern-opendata`).
 - `access/` — getting bytes local (`physlite-basics`, `rucio`).
 - `compute/` — running jobs and workflows (`reana`, `reana-workflows`).
+- `reference/` — canonical doc lookup (`cern-docs`, backed by the
+  cerndocs MCP).
 - `operational/` — meta-skills about how the assistant works
   (`verification-before-completion`, vendored from obra/superpowers).
 - `infra-advisor` (top-level) — meta-skill that routes ACROSS
@@ -195,6 +205,13 @@ wants real collaboration data.
   status, logs, downloads) or the `reana-workflows` skill (authoring
   `reana.yaml`, picking an engine, walking the create-upload-start-
   download cycle for the first time).
+- When the user asks "how does <CERN service> work" — SWAN session
+  flags, HTCondor / lxbatch submission, OpenStack flavors, ML@CERN
+  endpoints, Athena / ASG release internals — load the `cern-docs`
+  skill and route via the `cerndocs` MCP. Always start with
+  `search_docs` (token-cheap) on the matching `source` ID before
+  paying for a `fetch_doc` body. Cite the public docs URL the search
+  returns, not the MCP-internal identifier.
 - Always show MC normalisation with the explicit formula
   `weight = cross_section_pb * 1000 * kFactor * genFiltEff * mcWeight
   / sumOfWeights * luminosity_fb` — don't hide it in a helper.

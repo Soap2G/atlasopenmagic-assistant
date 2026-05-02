@@ -89,6 +89,11 @@
       "type": "remote",
       "url": "https://cernopendata-mcp.app.cern.ch/mcp",
       "oauth": false
+    },
+    "cerndocs": {
+      "type": "remote",
+      "url": "https://cern-mkdocs-mcp.app.cern.ch/mcp",
+      "oauth": false
     }
   },
 

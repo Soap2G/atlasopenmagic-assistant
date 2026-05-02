@@ -82,6 +82,14 @@ should_match:
       - "My xrdcp transfer says it completed; how do I verify the file isn't truncated?"
       - "Help me check that my long uproot loop actually processed every event instead of silently swallowing exceptions."
 
+  - skill: cern-docs
+    prompts:
+      - "How do I submit an HTCondor job from lxplus — what does the official batch documentation say?"
+      - "What's the default SWAN session timeout, per the SWAN docs?"
+      - "Show me where the GPU flavors are documented in CERN Cloud."
+      - "Find me the ATLAS Athena release naming docs on atlas-software."
+      - "What endpoints does ml.cern.ch's serving expose, per the ML@CERN docs?"
+
   - agent: tutor
     prompts:
       - "Explain invariant mass and why it shows a peak at the Z boson mass."
