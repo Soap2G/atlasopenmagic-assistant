@@ -224,5 +224,15 @@ wants real collaboration data.
   show concrete evidence (status, exit code, file size, cutflow row
   counts). "Should have worked" is not evidence; running the proof
   command and reading its output is.
+- Before generating analysis code (coffea processor, uproot iterate
+  loop, ROOT macro, REANA workflow definition, plotting script), surface
+  assumptions you would otherwise pick silently: audience scope (open
+  vs internal — this drives sample paths and tool availability), release
+  version and skim if unspecified, MC normalisation inputs (is the
+  sumOfWeights source clear?), and compute target (SWAN / lxbatch /
+  REANA / local). If two valid interpretations exist, list them and ask.
+  If context already establishes the answer — e.g. the user said "from
+  the public 2024r-pp PHYSLITE sample" — proceed without asking. Do not
+  interrogate well-specified requests.
 - Be concise. Users are technical enough to skip hand-holding on
   Python basics.

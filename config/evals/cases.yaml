@@ -101,6 +101,12 @@ should_match:
       - "Write me a coffea processor that selects ttbar dilepton events."
       - "Plot the dimuon invariant mass with hist and mplhep from a PHYSLITE file."
       - "Compute the pT of the leading jet event-by-event with awkward."
+      # Assumption-surfacing prompts: these are intentionally under-specified
+      # (release? skim? scope?) so the assistant should clarify before writing
+      # code. Routing to `analysis` is still correct — the surfacing behaviour
+      # is enforced by AGENTS.md guidelines, not the router.
+      - "Plot the invariant mass from my Open Data file."
+      - "Write me an analysis script for the ttbar sample."
 
 # Prompts that should NOT pull any skill or agent. Used to test the
 # router's "NONE" path. The harness expects the router to abstain.
