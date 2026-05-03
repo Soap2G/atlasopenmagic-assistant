@@ -209,9 +209,12 @@ wants real collaboration data.
   flags, HTCondor / lxbatch submission, OpenStack flavors, ML@CERN
   endpoints, Athena / ASG release internals — load the `cern-docs`
   skill and route via the `cerndocs` MCP. Always start with
-  `search_docs` (token-cheap) on the matching `source` ID before
-  paying for a `fetch_doc` body. Cite the public docs URL the search
-  returns, not the MCP-internal identifier.
+  `search_docs` (token-cheap). For `atlas-sft`, `atlas-computing`, and
+  `atlas-databases` you can follow up with `fetch_doc` to retrieve page
+  bodies (progressive: `outline` → `sections:<heading>` → `markdown`).
+  For `batch`, `cloud`, `ml`, and `swan`, `fetch_doc` is unavailable —
+  use `search_docs` with `limit=20` and extract from snippets. Cite the
+  public docs URL the search returns, not the MCP-internal identifier.
 - Always show MC normalisation with the explicit formula
   `weight = cross_section_pb * 1000 * kFactor * genFiltEff * mcWeight
   / sumOfWeights * luminosity_fb` — don't hide it in a helper.

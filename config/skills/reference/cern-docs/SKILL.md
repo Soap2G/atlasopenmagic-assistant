@@ -40,31 +40,50 @@ seven indexed sites. Pick the source that matches the user's domain;
 when ambiguous, search more than one — each source is its own BM25
 index and a wrong-source query can miss a hit silently.
 
-| `source` | Site | Topic |
-|---|---|---|
-| `atlas-sft` | atlas-software.docs.cern.ch | Athena, ASG, ATLAS software |
-| `atlas-computing` | atlas-computing.docs.cern.ch | Tier-0, grid, MC production |
-| `atlas-databases` | atlas-databases.docs.cern.ch | COOL, AMI, conditions DBs |
-| `batch` | batchdocs.web.cern.ch | HTCondor / lxbatch |
-| `cloud` | clouddocs.web.cern.ch | OpenStack, CERN Cloud, GPUs |
-| `ml` | ml.docs.cern.ch | ML@CERN, Kubeflow, serving |
-| `swan` | swan.docs.cern.ch | SWAN Jupyter sessions |
+| `source` | Site | Topic | `fetch_doc`? |
+|---|---|---|---|
+| `atlas-sft` | atlas-software.docs.cern.ch | Athena, ASG, ATLAS software | ✅ |
+| `atlas-computing` | atlas-computing.docs.cern.ch | Tier-0, grid, MC production | ✅ |
+| `atlas-databases` | atlas-databases.docs.cern.ch | COOL, AMI, conditions DBs | ✅ |
+| `batch` | batchdocs.web.cern.ch | HTCondor / lxbatch | ❌ snippets only |
+| `cloud` | clouddocs.web.cern.ch | OpenStack, CERN Cloud, GPUs | ❌ snippets only |
+| `ml` | ml.docs.cern.ch | ML@CERN, Kubeflow, serving | ❌ snippets only |
+| `swan` | swan.docs.cern.ch | SWAN Jupyter sessions | ❌ snippets only |
 
 The MCP also exposes a `docs://sources` resource that lists the
 registered sources at request time — call it if you suspect the source
 list has grown beyond the seven above.
 
-## Tool usage — progressively more expensive
+## Tool usage
 
-1. `search_docs(query, source, limit=10)` — BM25 search. Returns
-   title + URL + 200-char snippet only. **Token-cheap.** Always start
-   here unless the user already gave you a URL.
-2. `fetch_doc(url, mode="outline")` — headings only. Use to confirm
-   the right page before paying for the full body.
-3. `fetch_doc(url, mode="sections:<heading>")` — one section. Use
-   when the question is scoped to a known sub-heading.
-4. `fetch_doc(url, mode="markdown")` — full body. Most expensive;
-   reach for it only when the question genuinely needs the page.
+### Step 1 — always: `search_docs`
+
+`search_docs(query, source, limit=10)` — BM25 search. Returns title + URL +
+200-char snippet only. **Token-cheap.** Always start here regardless of source.
+
+### Step 2 — source-class dependent
+
+The seven sources split into two classes based on how their content is hosted:
+
+**Class A — Markdown-backed (`atlas-sft`, `atlas-computing`, `atlas-databases`)**
+These are MkDocs sites with a `docs/` directory accessible via the GitLab Files
+API. `fetch_doc` can retrieve full page bodies:
+
+- `fetch_doc(url, mode="outline")` — headings only. Confirm the right page first.
+- `fetch_doc(url, mode="sections:<heading>")` — one section; use when the
+  question is scoped to a known heading.
+- `fetch_doc(url, mode="markdown")` — full page body. Most expensive; use only
+  when the question genuinely needs the whole page.
+
+**Class B — search-only (`batch`, `cloud`, `ml`, `swan`)**
+These sources are hosted outside the MkDocs GitLab path resolver. `fetch_doc`
+returns "No matching source file" for all URLs from these sources.
+
+- Use `search_docs` with a higher limit (`limit=20`) to cast a wider net.
+- The 200-char snippet per result is the only retrieval mechanism available.
+- When the question is narrow (e.g. a specific config option), rephrase and
+  re-run rather than increasing the limit further.
+- Cite the public URL from the search hit even when you can't fetch the body.
 
 ## Output rules — what makes it into the user reply
 
@@ -78,17 +97,23 @@ list has grown beyond the seven above.
 
 ## Example flows
 
-**"How do I submit a condor job from lxplus?"**
-1. `search_docs(query="submit job from lxplus", source="batch")`
-2. Pick the top hit, `fetch_doc(url=<top hit URL>, mode="markdown")`.
-3. Quote the submission snippet, cite the URL.
+**"How does Athena versioning work?"** (atlas-sft — Class A)
+1. `search_docs(query="Athena release versioning", source="atlas-sft")`
+2. Pick the top hit, `fetch_doc(url=<hit URL>, mode="outline")` to confirm.
+3. `fetch_doc(url=<hit URL>, mode="markdown")` for the full body.
+4. Quote the relevant section, cite the URL.
 
-**"What's the default SWAN timeout?"**
-1. `search_docs(query="session timeout", source="swan", limit=5)`
-2. `fetch_doc(url=<top hit URL>, mode="sections:Session timeout")` —
-   if the heading exists in the outline.
-3. Otherwise `mode="markdown"`. Cite the URL.
+**"How do I submit a condor job from lxplus?"** (batch — Class B, search-only)
+1. `search_docs(query="submit job from lxplus", source="batch", limit=20)`
+2. Extract the answer from snippets; cite the returned URL.
+3. If snippets are thin, re-query with a tighter phrase:
+   `search_docs(query="condor_submit .sub file lxplus", source="batch", limit=20)`.
 
-**Cross-source question** ("compare HTCondor on batch vs SWAN's
-HTCondor pool"): run `search_docs` separately against `batch` and
-`swan`, present both. Don't let the BM25 ranker hide one source.
+**"What's the default SWAN session timeout?"** (swan — Class B, search-only)
+1. `search_docs(query="session timeout default", source="swan", limit=20)`
+2. Extract from snippets; cite the returned URL.
+3. *(fetch_doc is not available for swan — snippets are the ceiling.)*
+
+**Cross-source question** ("compare HTCondor on batch vs SWAN's HTCondor pool"):
+run `search_docs` separately against `batch` and `swan`, present both.
+Don't let the BM25 ranker silently hide one source.
