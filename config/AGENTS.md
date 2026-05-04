@@ -267,5 +267,10 @@ wants real collaboration data.
   `pdg-lookup` and quote the value with the PDG record URL and edition year.
   Never quote particle constants from training-data memory; this is a
   critical rule 5 trap.
+- When the user wants the published numerical tables (not just the
+  headline value) attached to an HEP measurement — for re-fitting,
+  plotting, or systematics studies — load `hepdata`. Common downstream
+  pipeline: `hepdata` → `read-publication` for context → `pyhf` /
+  `uproot` / `pandas` for the data.
 - Be concise. Users are technical enough to skip hand-holding on
   Python basics.

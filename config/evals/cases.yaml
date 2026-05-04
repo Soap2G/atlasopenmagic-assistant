@@ -96,6 +96,13 @@ should_match:
       - "What does the HZZ tutorial teach about backgrounds and systematics?"
       - "Help me understand why we apply a luminosity factor when normalising MC."
 
+  - skill: hepdata
+    prompts:
+      - "Get me the HEPData tables for the ATLAS H→γγ cross-section measurement at 13 TeV."
+      - "Download the YAML files for HEPData submission ins1849672."
+      - "What tables does HEPData have for paper 10.1007/JHEP12(2024)106?"
+      - "Find the covariance matrix attached to ATLAS-CONF-2024-019 on HEPData."
+
   - skill: pdg-lookup
     prompts:
       - "What is the PDG value for the Z boson mass?"
@@ -154,3 +161,6 @@ should_not_match:
   # pdg-lookup cliff guards (concept vs lookup; should route to tutor or NONE):
   - "Why does the Z boson have mass?"
   - "Explain the branching ratio concept in particle physics."
+  # hepdata cliff guards (vague data requests; route to atlas-opendata or pdg-lookup):
+  - "Find me Higgs data."
+  - "Get me the cross-section for ttbar from PDG."
