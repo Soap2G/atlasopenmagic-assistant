@@ -45,6 +45,33 @@
         "baseURL": "https://llmgw-litellm.web.cern.ch/v1"
       },
       "models": {
+        "mistral-large-latest": {
+          "name": "Mistral Large 2 (flagship)",
+          "tool_call": true,
+          "temperature": true,
+          "reasoning": false,
+          "attachment": false,
+          "release_date": "2024-11-01",
+          "limit": { "context": 128000, "output": 8192 }
+        },
+        "mistral-medium-latest": {
+          "name": "Mistral Medium 3 (balanced)",
+          "tool_call": true,
+          "temperature": true,
+          "reasoning": false,
+          "attachment": false,
+          "release_date": "2025-05-01",
+          "limit": { "context": 128000, "output": 8192 }
+        },
+        "codestral-latest": {
+          "name": "Codestral (code generation)",
+          "tool_call": true,
+          "temperature": true,
+          "reasoning": false,
+          "attachment": false,
+          "release_date": "2024-05-01",
+          "limit": { "context": 32768, "output": 8192 }
+        },
         "devstral-small-latest": {
           "name": "Devstral Small (Mistral coding)",
           "tool_call": true,
@@ -76,8 +103,8 @@
     }
   },
 
-  "model": "litellm/devstral-small-latest",
-  "small_model": "litellm/llama-3.1-8b-instruct",
+  "model": "litellm/mistral-medium-latest",
+  "small_model": "litellm/mistral-small-latest",
 
   "mcp": {
     "atlasopenmagic": {
