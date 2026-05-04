@@ -96,6 +96,13 @@ should_match:
       - "What does the HZZ tutorial teach about backgrounds and systematics?"
       - "Help me understand why we apply a luminosity factor when normalising MC."
 
+  - skill: read-publication
+    prompts:
+      - "Read /home/user/atlas-conf-2024-019.pdf and tell me the measured fiducial cross-section."
+      - "Get the abstract of arXiv:2401.12345."
+      - "What did INSPIRE record 1234567 measure, and at what luminosity?"
+      - "Open https://link.aps.org/doi/10.1103/PhysRevLett.130.041801 and find the BR(B→Kνν) result with the systematic breakdown."
+
   - agent: analysis
     prompts:
       - "Write me a coffea processor that selects ttbar dilepton events."
@@ -134,3 +141,6 @@ should_not_match:
   - "Where do I find the DAOD_PHYS for my collaboration analysis ntuple production at lxplus?"
   - "Look up the cross-section for an internal ATLAS DSID that isn't in any Open Data release."
   - "Read a non-public DAOD_PHYSLITE I produced from PanDA on the grid."
+  # read-publication cliff guards (off-topic / writing / vague):
+  - "Read me a children's book about quarks."
+  - "Help me write a paper about the Higgs boson."

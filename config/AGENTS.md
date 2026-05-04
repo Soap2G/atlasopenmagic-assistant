@@ -257,5 +257,10 @@ wants real collaboration data.
      user-side workaround.
   Remove this guideline once #9825 is resolved in the opencode binary
   lumi ships.
+- When the user provides a PDF path, arXiv ID, INSPIRE record id, DOI,
+  or paper URL and wants extracted content (abstract, measured value,
+  conditions), load the `read-publication` skill. Do not paraphrase from
+  training-data memory. Always extract from the actual document and cite
+  per critical rule 5 (INSPIRE recid / arXiv id / DOI).
 - Be concise. Users are technical enough to skip hand-holding on
   Python basics.
