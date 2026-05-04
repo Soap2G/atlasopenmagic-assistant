@@ -262,5 +262,10 @@ wants real collaboration data.
   conditions), load the `read-publication` skill. Do not paraphrase from
   training-data memory. Always extract from the actual document and cite
   per critical rule 5 (INSPIRE recid / arXiv id / DOI).
+- When the user asks for a PDG canonical particle property — mass, lifetime,
+  branching ratio, decay width, magnetic moment, mixing parameter — load
+  `pdg-lookup` and quote the value with the PDG record URL and edition year.
+  Never quote particle constants from training-data memory; this is a
+  critical rule 5 trap.
 - Be concise. Users are technical enough to skip hand-holding on
   Python basics.

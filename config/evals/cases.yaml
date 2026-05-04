@@ -96,6 +96,13 @@ should_match:
       - "What does the HZZ tutorial teach about backgrounds and systematics?"
       - "Help me understand why we apply a luminosity factor when normalising MC."
 
+  - skill: pdg-lookup
+    prompts:
+      - "What is the PDG value for the Z boson mass?"
+      - "Look up the muon lifetime with its uncertainty."
+      - "What's the PDG branching ratio for B0 → K*0 μ+ μ-?"
+      - "Quote me the top quark mass from the latest PDG review."
+
   - skill: read-publication
     prompts:
       - "Read /home/user/atlas-conf-2024-019.pdf and tell me the measured fiducial cross-section."
@@ -144,3 +151,6 @@ should_not_match:
   # read-publication cliff guards (off-topic / writing / vague):
   - "Read me a children's book about quarks."
   - "Help me write a paper about the Higgs boson."
+  # pdg-lookup cliff guards (concept vs lookup; should route to tutor or NONE):
+  - "Why does the Z boson have mass?"
+  - "Explain the branching ratio concept in particle physics."
