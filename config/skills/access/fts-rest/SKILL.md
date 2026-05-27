@@ -2,6 +2,7 @@
 name: fts-rest
 description: Use when the user runs the FTS3 REST CLI (`fts-rest-whoami`, `fts-rest-server-status`, `fts-rest-transfer-submit`, `fts-rest-transfer-list`, `fts-rest-transfer-status`, `fts-rest-transfer-cancel`, `fts-rest-delete-submit`, `fts-rest-delegate`, `fts-rest-ban`) against an FTS3 endpoint such as `https://fts3-pilot.cern.ch:8446` and needs to submit, list, inspect, or cancel point-to-point transfer jobs between SRM / XRootD / HTTPS / S3 storage endpoints, or query the user's FTS identity / server status / delegated proxy. Assumes the FTS endpoint is reachable, a valid X509 proxy (`X509_USER_PROXY`) exists, and `fts-rest-whoami -s <endpoint>` succeeds. Does NOT cover Rucio-driven transfers (Rucio uses FTS3 internally — use `rucio` for rule-based replication), FTS3 docs / configuration / installation (use `cern-docs` with `source="fts"`), or grid job submission (use PanDA / DIRAC). Disambiguator phrase: fts-rest-transfer-submit hyphenated CLI.
 data_scope: internal
+experiment: all
 ---
 
 # fts-rest — driving the FTS3 REST CLI for cross-site transfers

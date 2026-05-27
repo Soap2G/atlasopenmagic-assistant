@@ -2,6 +2,7 @@
 name: infra-advisor
 description: Use when the user describes a goal at the CERN/HEP infrastructure level and wants to know WHICH services to stitch (e.g. "I want distributed analysis on Open Data and to train an ML model"). Returns a 2–4-service stack with steps and pointers to the matching execution skill (`rucio`, `reana-workflows`, `physlite-basics`, …). Bundles a service catalogue (`reference/catalog.yaml`), pre-cooked recipes (`reference/recipes.md`), and digests on GPU access, SWAN+HTCondor scale-out, and columnar frameworks. Does NOT cover physics methodology, single-tool command-level help, or running specific code (use the dedicated skill named by the recommendation). Disambiguator phrase: CERN service stack composer.
 data_scope: both
+experiment: all
 ---
 
 ## Scope

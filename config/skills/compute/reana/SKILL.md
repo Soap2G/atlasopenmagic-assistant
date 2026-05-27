@@ -2,6 +2,7 @@
 name: reana
 description: Use when the user has an ALREADY-CREATED REANA workflow on a REANA cluster (https://reana.cern.ch or other deployment) and needs to inspect status, fetch logs, list workspaces, or download outputs with `reana-client`. Assumes `REANA_SERVER_URL` and `REANA_ACCESS_TOKEN` are set and `reana-client ping` succeeds. Does NOT cover authoring a new `reana.yaml` from scratch (use `reana-workflows`), generic Jupyter execution, or Rucio data movement. Disambiguator phrase: reana-client status triage.
 data_scope: both
+experiment: all
 ---
 
 ## Scope

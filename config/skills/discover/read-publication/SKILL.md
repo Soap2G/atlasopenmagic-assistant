@@ -2,6 +2,7 @@
 name: read-publication
 description: Use when the user gives you a PDF path, arXiv ID (`2401.12345` or `arXiv:2401.12345`), INSPIRE record id (`recid:1234567` or `inspire-hep:1234567`), DOI (`10.1103/...`), or HEP paper URL and wants extracted content — abstract, measured cross-section / branching ratio / mass, conditions, cuts, fit method. Routes to the right retrieval (`pdftotext` for local PDFs; INSPIRE + arXiv APIs via `WebFetch` for IDs and URLs). Always cites per AGENTS.md rule 5. Does NOT cover PDG canonical particle constants (use `pdg-lookup`), HEPData numerical tables for re-fitting (use `hepdata`), CERN service operator docs (use `cern-docs`), or Open Data dataset records (use `cern-opendata` or `atlas-opendata`). Disambiguator phrase: published-HEP-result extractor.
 data_scope: both
+experiment: all
 ---
 
 # read-publication — extract published HEP results from a paper

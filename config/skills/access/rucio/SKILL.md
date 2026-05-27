@@ -2,6 +2,7 @@
 name: rucio
 description: Use when the user runs the Rucio v38+ CLI on lxplus, SWAN, or a CVMFS-staged client (under `/cvmfs/sw.escape.eu/rucio/<version>/`) and needs to query DIDs, RSEs, replicas, metadata, or replication rules for collaboration-internal data. ALWAYS noun-verb (`rucio rse list`, `rucio did show`, `rucio rule add`); NEVER the deprecated flat verbs (`list-rses`, `list-dids`, `add-rule`, `get-metadata`, `rule-info`). Targets non-public datasets — for ATLAS Open Data DSIDs use `atlas-opendata` instead; for grid submission use PanDA, not Rucio directly. Disambiguator phrase: rucio v38 noun-verb.
 data_scope: internal
+experiment: all
 ---
 
 ## CRITICAL: emit only v38+ noun-verb commands

@@ -3,6 +3,7 @@ description: Use when the user is LEARNING rather than building — running an A
 mode: subagent
 temperature: 0.4
 accepts_data_scope: [open, both]
+accepts_experiment: [atlas, all]
 permission:
   edit: deny
   bash:

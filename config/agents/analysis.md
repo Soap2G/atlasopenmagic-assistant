@@ -3,6 +3,7 @@ description: Use when the user is WRITING or MODIFYING ATLAS Open Data analysis 
 mode: subagent
 temperature: 0.3
 accepts_data_scope: [open, both]
+accepts_experiment: [atlas, all]
 permission:
   edit: allow
   bash:

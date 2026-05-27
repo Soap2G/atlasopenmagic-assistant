@@ -2,6 +2,7 @@
 name: pdg-lookup
 description: Use when the user asks for a canonical Particle Data Group value — particle mass, lifetime, branching ratio, decay width, magnetic moment, mixing parameter, charge, spin, or any quoted "PDG average" constant. Backed by https://pdg.lbl.gov/ via WebFetch (HTML pdgLive pages and the PDG REST API where available). Always cites the PDG record URL and edition year. Does NOT cover ATLAS Monte Carlo metadata (use `atlas-opendata`), measured values from a specific paper (use `read-publication`), HEPData tabulated measurements (use `hepdata`), or conceptual physics explanations of why a particle has the value it does (use the `tutor` agent). Disambiguator phrase: PDG particle data group lookup.
 data_scope: both
+experiment: all
 ---
 
 # pdg-lookup — canonical particle physics constants

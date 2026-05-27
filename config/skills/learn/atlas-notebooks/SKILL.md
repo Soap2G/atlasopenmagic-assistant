@@ -2,6 +2,7 @@
 name: atlas-notebooks
 description: Use when the user names a specific ATLAS Open Data outreach notebook (e.g. `HZZAnalysis.ipynb`, `Find_the_Z`, `HyyAnalysis.ipynb`) or asks which runtime (Binder / Colab / SWAN / Docker image) to pick for one. Routes to the canonical path under `atlas-outreach-data-tools/notebooks-collection-opendata` and the matching docs section in `13TeV25Doc`. Does NOT cover Standard Model walkthroughs by physics process (use `sm-analyses`), DSID or cross-section lookups (use `atlas-opendata`), or fuzzy infrastructure goals (use `infra-advisor`). Disambiguator phrase: outreach notebook routing.
 data_scope: open
+experiment: atlas
 ---
 
 ## Scope

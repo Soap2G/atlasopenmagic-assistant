@@ -2,6 +2,7 @@
 name: hepdata
 description: Use when the user wants the numerical tables, ROOT files, or YAML data attached to a published HEP measurement, identified by HEPData submission ID (`ins1234567`, `123/v2`), INSPIRE record id, paper DOI, or paper title — typically because they want to re-fit, plot, or run systematics studies on the published measurement. Routes to https://www.hepdata.net/ via WebFetch and the HEPData REST API. Returns table URLs (YAML, ROOT, CSV) suitable for downstream `pyhf`, `pandas`, or `uproot`. Does NOT cover the paper's narrative or the headline measured value (use `read-publication`), PDG canonical constants (use `pdg-lookup`), or Open Data primary datasets (use `cern-opendata` or `atlas-opendata`). Disambiguator phrase: HEPData published-tables retrieval.
 data_scope: both
+experiment: all
 ---
 
 # hepdata — published HEP tables for re-fitting

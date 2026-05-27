@@ -47,6 +47,7 @@ AGENTS_DIR = ROOT / "config" / "agents"
 CASES_FILE = ROOT / "config" / "evals" / "cases.yaml"
 
 VALID_SCOPES = {"open", "internal", "both"}
+VALID_EXPERIMENTS = {"atlas", "cms", "lhcb", "alice", "all"}
 
 
 def extract_frontmatter(text: str) -> str | None:
@@ -111,6 +112,13 @@ def main() -> int:
             errors.append(
                 f"{rel}: data_scope={scope!r} not in {sorted(VALID_SCOPES)}"
             )
+        experiment = extract_field(fm, "experiment")
+        if experiment is None:
+            errors.append(f"{rel}: frontmatter missing `experiment:`")
+        elif experiment not in VALID_EXPERIMENTS:
+            errors.append(
+                f"{rel}: experiment={experiment!r} not in {sorted(VALID_EXPERIMENTS)}"
+            )
         if name in names:
             errors.append(
                 f"{rel}: duplicate name {name!r} (also in {names[name].relative_to(ROOT)})"
@@ -141,6 +149,21 @@ def main() -> int:
                 errors.append(
                     f"{rel}: accepts_data_scope contains invalid value(s) {bad!r}; "
                     f"allowed: {sorted(VALID_SCOPES)}"
+                )
+        accepts_exp = extract_scope_list(fm, "accepts_experiment")
+        if accepts_exp is None:
+            errors.append(f"{rel}: frontmatter missing `accepts_experiment:`")
+        elif not accepts_exp:
+            errors.append(
+                f"{rel}: accepts_experiment must be a non-empty flow-style list, "
+                f"e.g. [atlas, all]"
+            )
+        else:
+            bad_exp = [e for e in accepts_exp if e not in VALID_EXPERIMENTS]
+            if bad_exp:
+                errors.append(
+                    f"{rel}: accepts_experiment contains invalid value(s) {bad_exp!r}; "
+                    f"allowed: {sorted(VALID_EXPERIMENTS)}"
                 )
         name = path.stem
         if name in names:

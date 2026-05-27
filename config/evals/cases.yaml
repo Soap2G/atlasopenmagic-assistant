@@ -177,3 +177,6 @@ should_not_match:
   # fts-rest vs rucio cliff guards (Rucio-driven replication ≠ direct fts-rest):
   - "Add a Rucio replication rule that will trigger an FTS transfer."
   - "Use rucio rule add to enqueue cross-site copies via FTS3."
+  # Experiment-mismatch guards (ATLAS-only skills must not match CMS/LHCb prompts):
+  - "How do I read the CMS NanoAOD format and apply muon corrections?"
+  - "Walk me through the LHCb DaVinci stripping selections for my decay analysis."

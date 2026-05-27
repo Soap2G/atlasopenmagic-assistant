@@ -182,6 +182,32 @@ The same rule runs the other way once internal-scope personas exist:
 they should not silently substitute Open Data sources when the user
 wants real collaboration data.
 
+## Experiment filtering
+
+Alongside `data_scope`, every skill carries an `experiment` frontmatter
+field declaring which LHC experiment it serves:
+
+- `atlas` — ATLAS-specific (PHYSLITE format, ATLAS DSIDs, ATLAS outreach
+  notebooks, ATLAS Standard Model measurements).
+- `cms`, `lhcb`, `alice` — specific to that experiment.
+- `all` — experiment-agnostic (Rucio, REANA, the CERN Open Data portal,
+  Scikit-HEP tooling, PDG, HEPData, CERN service documentation).
+
+Personas declare which experiments they serve via `accepts_experiment`.
+Today both `tutor` and `analysis` accept `[atlas, all]` — they are the
+ATLAS Open Data audience.
+
+**Routing contract**: when a persona declares `accepts_experiment`, only
+consider skills whose `experiment` is in that set. If the user query
+implies an experiment outside the active persona's set — a CMS user
+asking how to read NanoAOD, an LHCb user asking about stripping lines —
+**do not substitute an ATLAS skill**. `physlite-basics` and
+`atlas-opendata` are ATLAS-only; their content is confidently wrong for
+CMS or LHCb. State that this audience does not cover the request and
+redirect to that experiment's own analysis support. This is the same
+discipline as open-vs-internal scope filtering, applied on the
+experiment axis.
+
 ## Guidelines
 
 - When the user describes a **goal** at the infra level — stitching

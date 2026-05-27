@@ -2,6 +2,7 @@
 name: cern-docs
 description: Use when the user asks how a CERN service or ATLAS / FTS framework operates and the answer should come from canonical operator documentation — HTCondor / lxbatch submission, SWAN session settings and HTCondor pool, CERN Cloud (OpenStack) flavors and quotas, ML@CERN training and serving, ATLAS Athena / ASG / Tier-0 / databases, ATLAS computing and grid production, FTS3 (File Transfer Service) configuration / installation / REST API / messaging / monitoring. Backed by the `cerndocs` MCP (`search_docs` for BM25 search, `fetch_doc` for one page) over 8 indexed sources: atlas-sft, atlas-computing, atlas-databases, batch, cloud, ml, swan, fts. Does NOT cover the `fts-rest-*` CLI itself (use `fts-rest`), Open Data dataset / recid / DOI lookup (use `cern-opendata` or `atlas-opendata`), live job-state inspection (use `reana` or shell tools), or multi-service infra recommendations (use `infra-advisor`). Disambiguator phrase: CERN docs BM25 multi-source.
 data_scope: both
+experiment: all
 ---
 
 # cern-docs — canonical CERN service & ATLAS-software documentation lookup
