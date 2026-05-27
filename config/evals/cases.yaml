@@ -68,6 +68,14 @@ should_match:
       - "Build a REANA workflow that runs my fit script and saves a plot."
       - "Walk me through validate, create, upload, start, download for a new REANA workflow."
 
+  - skill: htcondor
+    prompts:
+      - "How do I submit a 2-hour HTCondor job from lxplus with `+JobFlavour = longlunch`?"
+      - "Show me how to check the status of my running condor jobs and get JSON output for parsing."
+      - "Kill HTCondor cluster 8901234 and inspect why it was held — what commands do I run?"
+      - "Submit a multi-core HTCondor job at CERN via the htcondor2 Python bindings."
+      - "My old condor cluster ID disappeared after a schedd migration — how do I find its history on the previous schedd?"
+
   - skill: infra-advisor
     prompts:
       - "I want to run distributed analysis on Open Data and train an ML model."
@@ -204,3 +212,6 @@ should_not_match:
   # Experiment-mismatch guards (ATLAS-only skills must not match CMS/LHCb prompts):
   - "How do I read the CMS NanoAOD format and apply muon corrections?"
   - "Walk me through the LHCb DaVinci stripping selections for my decay analysis."
+  # htcondor cliff guards (SLURM ≠ HTCondor; docs-lookup ≠ operational):
+  - "How do I submit an MPI job to CERN's Linux HPC SLURM cluster?"
+  - "What do the official CERN batch documentation pages say about HTCondor authentication?"

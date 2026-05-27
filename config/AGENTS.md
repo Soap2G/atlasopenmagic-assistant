@@ -242,6 +242,14 @@ experiment axis.
   status, logs, downloads) or the `reana-workflows` skill (authoring
   `reana.yaml`, picking an engine, walking the create-upload-start-
   download cycle for the first time).
+- When the user wants to submit, monitor, inspect, or kill HTCondor
+  jobs at CERN — `condor_submit`, `condor_q`, `condor_history`,
+  `condor_rm`, or the `htcondor` / `htcondor2` Python bindings — load
+  the `htcondor` skill. Detect availability with `command -v
+  condor_submit`. The skill covers `+JobFlavour` picks, resource
+  requests, and CERN's automatic Kerberos / AFS / EOS credential
+  handling. Use `cern-docs` (source `batch`) for documentation queries;
+  `htcondor` for operational use.
 - When the user asks "how does <CERN service> work" — SWAN session
   flags, HTCondor / lxbatch submission, OpenStack flavors, ML@CERN
   endpoints, Athena / ASG release internals — load the `cern-docs`
